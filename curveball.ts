@@ -1,8 +1,8 @@
 #!/usr/bin/env ts-node
-import * as program from 'commander';
-import * as signale from 'signale';
-import * as fs from 'fs';
 import { exec } from 'child_process';
+import * as program from 'commander';
+import * as fs from 'fs';
+import * as signale from 'signale';
 
 program.command('backup').alias('b').action(async () => {
     try {
@@ -14,6 +14,21 @@ program.command('backup').alias('b').action(async () => {
     signale.timeEnd('backup');
     signale.success('Backup completed');
 
+});
+
+program.command('restore').alias('r').action(async () => {
+    signale.pending('Starting restore');
+    signale.time('restore');
+    const dir = './backups';
+    const files = fs.readdirSync(dir);
+    files.sort(function (a, b) {
+        return fs.statSync(dir + a).mtime.getTime() - fs.statSync(dir + b).mtime.getTime();
+    });
+    const latestBackup = files[0];
+    console.log(latestBackup);
+    await exec(`docker exec -t curveball_curveball-db_1 psql -f ${dir}/${latestBackup} postgres`);
+    signale.timeEnd('restore');
+    signale.success('Restore completed');
 });
 
 (async () => {
