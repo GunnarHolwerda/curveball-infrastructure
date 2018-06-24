@@ -2,7 +2,7 @@ version: '2'
 
 services:
   curveball-db:
-    image: postgres
+    image: postgres:10.4
     restart: always
     ports: 
       - "5432:5432"
@@ -13,10 +13,25 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: example
   curveball-quiz:
-    image: gunnarholwerda/quiz
+    image: curveball/quiz
     restart: always
     ports:
       - "3000:3000"
     volumes:
       - '../quiz/src/:/usr/local/src/quiz/src'
       - '../quiz/serverless.yml:/usr/local/src/quiz/serverless.yml'
+  curveball-cache:
+    image: redis:4.0
+    restart: always
+    ports: 
+      - "6379:6379"
+  curveball-realtime:
+    image: curveball/realtime
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - '../realtime/src/:/usr/local/src/realtime/src'
+      - '../realtime/index.ts:/usr/local/src/realtime/index.ts'
+
+
