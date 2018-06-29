@@ -424,7 +424,7 @@ ALTER TABLE ONLY public.answer_submission
 --
 
 ALTER TABLE ONLY public.questions_choices
-    ADD CONSTRAINT questions_choices_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.quizzes(quiz_id);
+    ADD CONSTRAINT questions_choices_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(question_id);
 
 
 --
