@@ -1,0 +1,11 @@
+{
+    "defaultEnv": "dev_qr",
+    "dev_qr": {
+        "driver": "pg",
+        "user": "admin",
+        "password": "example",
+        "host": "localhost",
+        "database": "curveball",
+        "schema": "quizrunner"
+    }
+}
