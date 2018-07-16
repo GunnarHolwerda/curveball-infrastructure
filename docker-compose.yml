@@ -9,6 +9,7 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
       - ./backups:/var/log/pg_backups
+      - ./schema:/var/log/pg_schema
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: example
