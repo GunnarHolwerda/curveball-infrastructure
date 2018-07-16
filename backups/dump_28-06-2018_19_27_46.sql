@@ -287,56 +287,49 @@ COPY public.winners (quiz_id, user_id, amount_won) FROM stdin;
 -- Name: answer_submission answer_submission_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.answer_submission
-    ADD CONSTRAINT answer_submission_pkey PRIMARY KEY (question_id, user_id, choice_id);
+ALTER TABLE ONLY public.answer_submission ADD CONSTRAINT answer_submission_pkey PRIMARY KEY (question_id, user_id, choice_id);
 
 
 --
 -- Name: questions_choices questions_choices_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.questions_choices
-    ADD CONSTRAINT questions_choices_pkey PRIMARY KEY (choice_id);
+ALTER TABLE ONLY public.questions_choices ADD CONSTRAINT questions_choices_pkey PRIMARY KEY (choice_id);
 
 
 --
 -- Name: questions questions_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.questions
-    ADD CONSTRAINT questions_pkey PRIMARY KEY (question_id);
+ALTER TABLE ONLY public.questions ADD CONSTRAINT questions_pkey PRIMARY KEY (question_id);
 
 
 --
 -- Name: quizzes quizzes_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.quizzes
-    ADD CONSTRAINT quizzes_pkey PRIMARY KEY (quiz_id);
+ALTER TABLE ONLY public.quizzes ADD CONSTRAINT quizzes_pkey PRIMARY KEY (quiz_id);
 
 
 --
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);
+ALTER TABLE ONLY public.users ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);
 
 
 --
 -- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_username_key UNIQUE (username);
+ALTER TABLE ONLY public.users ADD CONSTRAINT users_username_key UNIQUE (username);
 
 
 --
 -- Name: winners winners_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.winners
-    ADD CONSTRAINT winners_pkey PRIMARY KEY (quiz_id, user_id);
+ALTER TABLE ONLY public.winners ADD CONSTRAINT winners_pkey PRIMARY KEY (quiz_id, user_id);
 
 
 --
@@ -399,56 +392,49 @@ CREATE INDEX winners_user_id_fkey ON public.winners USING btree (user_id);
 -- Name: answer_submission answer_submission_choice_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.answer_submission
-    ADD CONSTRAINT answer_submission_choice_id_fkey FOREIGN KEY (choice_id) REFERENCES public.questions_choices(choice_id);
+ALTER TABLE ONLY public.answer_submission ADD CONSTRAINT answer_submission_choice_id_fkey FOREIGN KEY (choice_id) REFERENCES public.questions_choices(choice_id);
 
 
 --
 -- Name: answer_submission answer_submission_question_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.answer_submission
-    ADD CONSTRAINT answer_submission_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(question_id);
+ALTER TABLE ONLY public.answer_submission ADD CONSTRAINT answer_submission_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(question_id);
 
 
 --
 -- Name: answer_submission answer_submission_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.answer_submission
-    ADD CONSTRAINT answer_submission_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
+ALTER TABLE ONLY public.answer_submission ADD CONSTRAINT answer_submission_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
 
 
 --
 -- Name: questions_choices questions_choices_question_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.questions_choices
-    ADD CONSTRAINT questions_choices_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(question_id);
+ALTER TABLE ONLY public.questions_choices ADD CONSTRAINT questions_choices_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(question_id);
 
 
 --
 -- Name: questions questions_quiz_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.questions
-    ADD CONSTRAINT questions_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(quiz_id);
+ALTER TABLE ONLY public.questions ADD CONSTRAINT questions_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(quiz_id);
 
 
 --
 -- Name: winners winners_quiz_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.winners
-    ADD CONSTRAINT winners_quiz_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(quiz_id);
+ALTER TABLE ONLY public.winners ADD CONSTRAINT winners_quiz_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(quiz_id);
 
 
 --
 -- Name: winners winners_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
-ALTER TABLE ONLY public.winners
-    ADD CONSTRAINT winners_user_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
+ALTER TABLE ONLY public.winners ADD CONSTRAINT winners_user_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
 
 
 --
