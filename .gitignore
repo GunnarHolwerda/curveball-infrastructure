@@ -62,3 +62,7 @@ typings/
 
 # Database data
 data/
+
+# Certificate files
+certs/*.*
+*.srl

@@ -10,6 +10,7 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
       - ./backups:/var/log/pg_backups
       - ./schema:/var/log/pg_schema
+      - './certs/:/etc/ssl/private/'
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: example
@@ -21,6 +22,7 @@ services:
     volumes:
       - '../quiz/src/:/usr/local/src/quiz/src'
       - '../quiz/serverless.yml:/usr/local/src/quiz/serverless.yml'
+      - './certs/:/etc/ssl/private/'
   curveball-cache:
     image: redis:4.0
     restart: always
@@ -34,5 +36,6 @@ services:
     volumes:
       - '../realtime/src/:/usr/local/src/realtime/src'
       - '../realtime/index.ts:/usr/local/src/realtime/index.ts'
+      - './certs/:/etc/ssl/private/'
 
 
