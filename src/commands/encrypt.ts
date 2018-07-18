@@ -32,12 +32,12 @@ export async function encrypt(): Promise<void> {
     signale.info('Generating private key for server');
     await exec(
         `openssl req -new -sha256 -nodes -out ./certs/server.csr` +
-        ` -newkey rsa:2048 -keyout ./certs/server.key -config ./certs/server.csr.cnf`
+        ` -newkey rsa:2048 -keyout ./certs/key.pem -config ./certs/server.csr.cnf`
     );
     signale.info(`Generating cert for server`);
     await exec(
         `openssl x509 -req -in ./certs/server.csr -CA ./certs/rootCA.pem` +
-        ` -CAkey ./certs/rootCA.key -CAcreateserial -out ./certs/server.crt -days 500 -sha256 -extfile ./certs/v3.ext`
+        ` -CAkey ./certs/rootCA.key -CAcreateserial -out ./certs/cert.pem -days 500 -sha256 -extfile ./certs/v3.ext`
     );
     signale.success(`SSL cert created successfully`);
     process.exit(0);

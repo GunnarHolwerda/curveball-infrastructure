@@ -4,9 +4,13 @@ import * as signale from 'signale';
 
 export async function buildImages(): Promise<void> {
     signale.time('Building docker images');
-    const buildImagePromises = DockerDirs.map((dir) => {
-        return exec(`cd ${dir} && npm run build:image`);
-    });
-    await Promise.all(buildImagePromises);
+    try {
+        const buildImagePromises = DockerDirs.map((dir) => {
+            return exec(`cd ${dir} && npm run build:image`);
+        });
+        await Promise.all(buildImagePromises);
+    } catch (e) {
+        signale.error('Something failed, make sure docker is running');
+    }
     signale.timeEnd('Building docker images');
 }
