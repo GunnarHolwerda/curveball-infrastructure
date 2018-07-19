@@ -28,7 +28,7 @@ COPY quizrunner.migrations (id, name, run_on) FROM stdin;
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: quizrunner; Owner: admin
 --
 
-SELECT pg_catalog.setval('quizrunner.migrations_id_seq', 1, true);
+SELECT pg_catalog.setval('quizrunner.migrations_id_seq', 36, true);
 
 
 --
