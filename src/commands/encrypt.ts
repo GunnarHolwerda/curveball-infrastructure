@@ -2,6 +2,7 @@ import { exec } from 'mz/child_process';
 import { fs } from 'mz';
 import * as signale from 'signale';
 import { keypress } from '../utils';
+import { QuizDir } from '../constants';
 
 
 export async function encrypt(): Promise<void> {
@@ -24,6 +25,8 @@ export async function encrypt(): Promise<void> {
         `openssl req -x509 -new -nodes -key ./certs/rootCA.key` +
         ` -sha256 -days 1024 -out ./certs/rootCA.pem -subj '/CN=Local/O=My Company Name LTD./C=US'`
     );
+    fs.mkdirSync(`${QuizDir}/tests/api/ssl-ca`);
+    fs.copyFileSync('./certs/rootCA.pem', `${QuizDir}/tests/api/ssl-ca/rootCA.pem`);
 
     signale.error('Follow the instructions here at "Step 2: Trust the root SSL certificate": https://goo.gl/4vUZJC');
     signale.await('Hit enter when you have trusted the certs generated in ./certs');
