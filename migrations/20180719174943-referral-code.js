@@ -76,6 +76,32 @@ exports.up = async function (db) {
   $$ language plpgsql;`)
 
   await db.runSql('UPDATE users SET referral_code = random_string(12) WHERE referral_code = \'invalid\'');
+  await db.createTable('lives', {
+    id: {
+      type: 'int',
+      primaryKey: true,
+      autoIncrement: true
+    },
+    user_id: {
+      type: 'uuid',
+      foreignKey: {
+        name: 'lives_users_fk',
+        table: 'users',
+        rules: {
+          onDelete: 'RESTRICT',
+          onUpdate: 'CASCADE'
+        },
+        mapping: {
+          user_id: 'user_id'
+        }
+      }
+    },
+    valid: {
+      type: 'boolean',
+      defaultValue: true,
+      notNull: true
+    }
+  });
 };
 
 exports.down = async function (db) {
@@ -85,6 +111,7 @@ exports.down = async function (db) {
     notNull: true
   });
   await db.dropTable('referrals');
+  await db.dropTable('lives');
   await db.removeColumn('users', 'referral_code');
   await db.runSql('DROP FUNCTION IF EXISTS random_string');
 };
