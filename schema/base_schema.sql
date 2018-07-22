@@ -36,6 +36,7 @@ DROP INDEX quizrunner.answer_submission_choice_id_fkey;
 ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_pkey;
 ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_username_key;
 ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_pkey;
+ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_phone_key;
 ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_referred_user_key;
 ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_pkey;
 ALTER TABLE ONLY quizrunner.quizzes DROP CONSTRAINT quizzes_pkey;
@@ -122,20 +123,20 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 
 CREATE FUNCTION public.random_string(length integer) RETURNS text
     LANGUAGE plpgsql
-    AS $$
-declare
-  chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
-  result text := '';
-  i integer := 0;
-begin
-  if length < 0 then
-    raise exception 'Given length cannot be less than 0';
-  end if;
-  for i in 1..length loop
-    result := result || chars[1+random()*(array_length(chars, 1)-1)];
-  end loop;
-  return result;
-end;
+    AS $$
+declare
+  chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+  result text := '';
+  i integer := 0;
+begin
+  if length < 0 then
+    raise exception 'Given length cannot be less than 0';
+  end if;
+  for i in 1..length loop
+    result := result || chars[1+random()*(array_length(chars, 1)-1)];
+  end loop;
+  return result;
+end;
 $$;
 
 
@@ -147,20 +148,20 @@ ALTER FUNCTION public.random_string(length integer) OWNER TO admin;
 
 CREATE FUNCTION quizrunner.random_string(length integer) RETURNS text
     LANGUAGE plpgsql
-    AS $$
-  declare
-    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
-    result text := '';
-    i integer := 0;
-  begin
-    if length < 0 then
-      raise exception 'Given length cannot be less than 0';
-    end if;
-    for i in 1..length loop
-      result := result || chars[1+random()*(array_length(chars, 1)-1)];
-    end loop;
-    return result;
-  end;
+    AS $$
+  declare
+    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+    result text := '';
+    i integer := 0;
+  begin
+    if length < 0 then
+      raise exception 'Given length cannot be less than 0';
+    end if;
+    for i in 1..length loop
+      result := result || chars[1+random()*(array_length(chars, 1)-1)];
+    end loop;
+    return result;
+  end;
   $$;
 
 
@@ -322,14 +323,12 @@ ALTER TABLE quizrunner.referrals OWNER TO admin;
 CREATE TABLE quizrunner.users (
     user_id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     name character varying(255),
-    phone character varying(15),
+    phone character varying(15) NOT NULL,
     enabled boolean DEFAULT true NOT NULL,
     created timestamp without time zone DEFAULT now() NOT NULL,
     last_accessed timestamp without time zone DEFAULT now() NOT NULL,
     username character varying(15) NOT NULL,
-    password character varying(255) NOT NULL,
-    photo text DEFAULT 'http://pixelartmaker.com/art/a27e62d4a45d2bc.png'::text NOT NULL,
-    referral_code character varying(12) DEFAULT 'invalid'::character varying NOT NULL
+    photo text DEFAULT 'http://pixelartmaker.com/art/a27e62d4a45d2bc.png'::text NOT NULL
 );
 
 
@@ -424,6 +423,14 @@ ALTER TABLE ONLY quizrunner.referrals
 
 ALTER TABLE ONLY quizrunner.referrals
     ADD CONSTRAINT referrals_referred_user_key UNIQUE (referred_user);
+
+
+--
+-- Name: users users_phone_key; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+--
+
+ALTER TABLE ONLY quizrunner.users
+    ADD CONSTRAINT users_phone_key UNIQUE (phone);
 
 
 --
