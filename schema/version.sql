@@ -21,6 +21,8 @@ SET row_security = off;
 
 COPY quizrunner.migrations (id, name, run_on) FROM stdin;
 1	/20180716023428-ticker-and-sports	2018-07-15 21:57:22.891
+2	/20180719174943-referral-code	2018-07-15 21:57:22.891
+37	/20180722190810-alter-answer-pk	2018-07-22 12:30:14.769
 \.
 
 
@@ -28,7 +30,7 @@ COPY quizrunner.migrations (id, name, run_on) FROM stdin;
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: quizrunner; Owner: admin
 --
 
-SELECT pg_catalog.setval('quizrunner.migrations_id_seq', 1, true);
+SELECT pg_catalog.setval('quizrunner.migrations_id_seq', 37, true);
 
 
 --

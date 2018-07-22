@@ -16,13 +16,13 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db) {
   return db.addColumn('questions', 'ticker', {
-    type: 'varchar',
+    type: 'string',
     notNull: true,
     length: 64,
     default: 'empty'
   }).then((result) => {
     return db.addColumn('questions', 'sport', {
-      type: 'varchar',
+      type: 'string',
       notNull: true,
       length: 64,
       default: 'MLB'
