@@ -96,10 +96,19 @@ exports.up = async function (db) {
         }
       }
     },
-    valid: {
-      type: 'boolean',
-      defaultValue: true,
-      notNull: true
+    question: {
+      type: 'uuid',
+      foreignKey: {
+        name: 'lives_question_fk',
+        table: 'questions',
+        rules: {
+          onDelete: 'RESTRICT',
+          onUpdate: 'CASCADE'
+        },
+        mapping: {
+          question: 'question_id'
+        }
+      }
     }
   });
 };
