@@ -17,8 +17,11 @@ SET row_security = off;
 
 ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_user_fkey;
 ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_quiz_fkey;
-ALTER TABLE ONLY quizrunner.questions DROP CONSTRAINT questions_quiz_id_fkey;
+ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_users_referrer_fk;
+ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_users_referred_user_fk;
 ALTER TABLE ONLY quizrunner.questions_choices DROP CONSTRAINT questions_choices_question_id_fkey;
+ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_users_fk;
+ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_question_fk;
 ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_user_id_fkey;
 ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_question_id_fkey;
 ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_choice_id_fkey;
@@ -33,20 +36,29 @@ DROP INDEX quizrunner.answer_submission_choice_id_fkey;
 ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_pkey;
 ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_username_key;
 ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_pkey;
+ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_referred_user_key;
+ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_pkey;
 ALTER TABLE ONLY quizrunner.quizzes DROP CONSTRAINT quizzes_pkey;
 ALTER TABLE ONLY quizrunner.questions DROP CONSTRAINT questions_pkey;
 ALTER TABLE ONLY quizrunner.questions_choices DROP CONSTRAINT questions_choices_pkey;
 ALTER TABLE ONLY quizrunner.migrations DROP CONSTRAINT migrations_pkey;
+ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_pkey;
 ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_pkey;
 ALTER TABLE quizrunner.migrations ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE quizrunner.lives ALTER COLUMN id DROP DEFAULT;
 DROP TABLE quizrunner.winners;
 DROP TABLE quizrunner.users;
+DROP TABLE quizrunner.referrals;
 DROP TABLE quizrunner.quizzes;
 DROP TABLE quizrunner.questions_choices;
 DROP TABLE quizrunner.questions;
 DROP SEQUENCE quizrunner.migrations_id_seq;
 DROP TABLE quizrunner.migrations;
+DROP SEQUENCE quizrunner.lives_id_seq;
+DROP TABLE quizrunner.lives;
 DROP TABLE quizrunner.answer_submission;
+DROP FUNCTION quizrunner.random_string(length integer);
+DROP FUNCTION public.random_string(length integer);
 DROP EXTENSION "uuid-ossp";
 DROP EXTENSION plpgsql;
 DROP SCHEMA quizrunner;
@@ -104,6 +116,56 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
 
 
+--
+-- Name: random_string(integer); Type: FUNCTION; Schema: public; Owner: admin
+--
+
+CREATE FUNCTION public.random_string(length integer) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+declare
+  chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+  result text := '';
+  i integer := 0;
+begin
+  if length < 0 then
+    raise exception 'Given length cannot be less than 0';
+  end if;
+  for i in 1..length loop
+    result := result || chars[1+random()*(array_length(chars, 1)-1)];
+  end loop;
+  return result;
+end;
+$$;
+
+
+ALTER FUNCTION public.random_string(length integer) OWNER TO admin;
+
+--
+-- Name: random_string(integer); Type: FUNCTION; Schema: quizrunner; Owner: admin
+--
+
+CREATE FUNCTION quizrunner.random_string(length integer) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+  declare
+    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+    result text := '';
+    i integer := 0;
+  begin
+    if length < 0 then
+      raise exception 'Given length cannot be less than 0';
+    end if;
+    for i in 1..length loop
+      result := result || chars[1+random()*(array_length(chars, 1)-1)];
+    end loop;
+    return result;
+  end;
+  $$;
+
+
+ALTER FUNCTION quizrunner.random_string(length integer) OWNER TO admin;
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -121,6 +183,41 @@ CREATE TABLE quizrunner.answer_submission (
 
 
 ALTER TABLE quizrunner.answer_submission OWNER TO admin;
+
+--
+-- Name: lives; Type: TABLE; Schema: quizrunner; Owner: admin
+--
+
+CREATE TABLE quizrunner.lives (
+    id integer NOT NULL,
+    user_id uuid,
+    question uuid
+);
+
+
+ALTER TABLE quizrunner.lives OWNER TO admin;
+
+--
+-- Name: lives_id_seq; Type: SEQUENCE; Schema: quizrunner; Owner: admin
+--
+
+CREATE SEQUENCE quizrunner.lives_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE quizrunner.lives_id_seq OWNER TO admin;
+
+--
+-- Name: lives_id_seq; Type: SEQUENCE OWNED BY; Schema: quizrunner; Owner: admin
+--
+
+ALTER SEQUENCE quizrunner.lives_id_seq OWNED BY quizrunner.lives.id;
+
 
 --
 -- Name: migrations; Type: TABLE; Schema: quizrunner; Owner: admin
@@ -207,6 +304,18 @@ CREATE TABLE quizrunner.quizzes (
 ALTER TABLE quizrunner.quizzes OWNER TO admin;
 
 --
+-- Name: referrals; Type: TABLE; Schema: quizrunner; Owner: admin
+--
+
+CREATE TABLE quizrunner.referrals (
+    referrer uuid NOT NULL,
+    referred_user uuid NOT NULL
+);
+
+
+ALTER TABLE quizrunner.referrals OWNER TO admin;
+
+--
 -- Name: users; Type: TABLE; Schema: quizrunner; Owner: admin
 --
 
@@ -217,10 +326,10 @@ CREATE TABLE quizrunner.users (
     enabled boolean DEFAULT true NOT NULL,
     created timestamp without time zone DEFAULT now() NOT NULL,
     last_accessed timestamp without time zone DEFAULT now() NOT NULL,
-    referred boolean DEFAULT false NOT NULL,
     username character varying(15) NOT NULL,
     password character varying(255) NOT NULL,
-    photo text DEFAULT 'http://pixelartmaker.com/art/a27e62d4a45d2bc.png'::text NOT NULL
+    photo text DEFAULT 'http://pixelartmaker.com/art/a27e62d4a45d2bc.png'::text NOT NULL,
+    referral_code character varying(12) DEFAULT 'invalid'::character varying NOT NULL
 );
 
 
@@ -240,6 +349,13 @@ CREATE TABLE quizrunner.winners (
 ALTER TABLE quizrunner.winners OWNER TO admin;
 
 --
+-- Name: lives id; Type: DEFAULT; Schema: quizrunner; Owner: admin
+--
+
+ALTER TABLE ONLY quizrunner.lives ALTER COLUMN id SET DEFAULT nextval('quizrunner.lives_id_seq'::regclass);
+
+
+--
 -- Name: migrations id; Type: DEFAULT; Schema: quizrunner; Owner: admin
 --
 
@@ -251,7 +367,15 @@ ALTER TABLE ONLY quizrunner.migrations ALTER COLUMN id SET DEFAULT nextval('quiz
 --
 
 ALTER TABLE ONLY quizrunner.answer_submission
-    ADD CONSTRAINT answer_submission_pkey PRIMARY KEY (question_id, user_id, choice_id);
+    ADD CONSTRAINT answer_submission_pkey PRIMARY KEY (user_id, question_id);
+
+
+--
+-- Name: lives lives_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+--
+
+ALTER TABLE ONLY quizrunner.lives
+    ADD CONSTRAINT lives_pkey PRIMARY KEY (id);
 
 
 --
@@ -284,6 +408,22 @@ ALTER TABLE ONLY quizrunner.questions
 
 ALTER TABLE ONLY quizrunner.quizzes
     ADD CONSTRAINT quizzes_pkey PRIMARY KEY (quiz_id);
+
+
+--
+-- Name: referrals referrals_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+--
+
+ALTER TABLE ONLY quizrunner.referrals
+    ADD CONSTRAINT referrals_pkey PRIMARY KEY (referrer, referred_user);
+
+
+--
+-- Name: referrals referrals_referred_user_key; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+--
+
+ALTER TABLE ONLY quizrunner.referrals
+    ADD CONSTRAINT referrals_referred_user_key UNIQUE (referred_user);
 
 
 --
@@ -391,6 +531,22 @@ ALTER TABLE ONLY quizrunner.answer_submission
 
 
 --
+-- Name: lives lives_question_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+--
+
+ALTER TABLE ONLY quizrunner.lives
+    ADD CONSTRAINT lives_question_fk FOREIGN KEY (question) REFERENCES quizrunner.questions(question_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: lives lives_users_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+--
+
+ALTER TABLE ONLY quizrunner.lives
+    ADD CONSTRAINT lives_users_fk FOREIGN KEY (user_id) REFERENCES quizrunner.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
 -- Name: questions_choices questions_choices_question_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
 --
 
@@ -399,11 +555,19 @@ ALTER TABLE ONLY quizrunner.questions_choices
 
 
 --
--- Name: questions questions_quiz_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: referrals referrals_users_referred_user_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
 --
 
-ALTER TABLE ONLY quizrunner.questions
-    ADD CONSTRAINT questions_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES quizrunner.quizzes(quiz_id);
+ALTER TABLE ONLY quizrunner.referrals
+    ADD CONSTRAINT referrals_users_referred_user_fk FOREIGN KEY (referred_user) REFERENCES quizrunner.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: referrals referrals_users_referrer_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+--
+
+ALTER TABLE ONLY quizrunner.referrals
+    ADD CONSTRAINT referrals_users_referrer_fk FOREIGN KEY (referrer) REFERENCES quizrunner.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
