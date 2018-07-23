@@ -1,7 +1,9 @@
-export const InfrastructureDir = '~/curveball/infrastructure';
-export const RealtimeDir = '~/curveball/realtime';
-export const QuizDir = '~/curveball/quiz';
-export const CurveballControlDir = '~/curveball/curveball-controller';
+import * as path from 'path';
+
+export const InfrastructureDir = path.resolve('../infrastructure');
+export const RealtimeDir = path.resolve('..//realtime');
+export const QuizDir = path.resolve('../quiz');
+export const CurveballControlDir = path.resolve('../curveball-control');
 
 export const BackUpDir = `${InfrastructureDir}/backups`;
 export const SchemaDir = `${InfrastructureDir}/schema`;

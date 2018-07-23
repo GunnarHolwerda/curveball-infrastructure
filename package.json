@@ -23,12 +23,14 @@
     "dockerode": "^2.5.5",
     "mz": "^2.7.0",
     "signale": "^1.2.0",
+    "sleep": "^5.1.1",
     "tslint": "^5.10.0",
     "typescript": "^2.9.2"
   },
   "devDependencies": {
     "@types/mz": "0.0.32",
     "@types/signale": "^1.2.0",
+    "@types/sleep": "0.0.7",
     "@types/uuid": "^3.4.3"
   }
 }
