@@ -1,11 +1,12 @@
 import { exec } from 'mz/child_process';
 import { fs } from 'mz';
 import * as signale from 'signale';
+import { DbContainerName } from '../constants';
 
 const BaseSchemaFile = 'schema/base_schema.sql';
 const VersionFile = 'schema/version.sql';
 
-const BaseDockerDbCommand = 'docker exec -t infrastructure_curveball-db_1';
+const BaseDockerDbCommand = `docker exec -t ${DbContainerName}`;
 
 export async function createBaseSchema() {
     try {

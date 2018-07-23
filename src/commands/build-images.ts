@@ -11,6 +11,7 @@ export async function buildImages(): Promise<void> {
         await Promise.all(buildImagePromises);
     } catch (e) {
         signale.error('Something failed, make sure docker is running');
+        throw e;
     }
     signale.timeEnd('Building docker images');
 }
