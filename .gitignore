@@ -66,3 +66,4 @@ data/
 # Certificate files
 certs/*.*
 *.srl
+.DS_STORE
