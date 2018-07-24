@@ -1,8 +1,8 @@
-import { exec } from 'mz/child_process';
 import { fs } from 'mz';
+import { exec } from 'mz/child_process';
 import * as signale from 'signale';
+import { QuizDir } from '../constants';
 import { keypress } from '../utils';
-import { QuizDir, CertsDir } from '../constants';
 
 
 export async function encrypt(): Promise<void> {
