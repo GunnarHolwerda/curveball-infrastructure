@@ -67,3 +67,4 @@ data/
 certs/*.*
 *.srl
 .DS_STORE
+dist/

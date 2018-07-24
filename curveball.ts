@@ -23,6 +23,7 @@ program.command('build-images').alias('bi').action(buildImages);
 program.command('migrate').alias('m').action(migrate);
 program.command('up').alias('u').action(up);
 
+// tslint:disable-next-line
 (async () => {
     try {
         await Promise.all(dirChecks);
