@@ -37,5 +37,13 @@ services:
       - '../realtime/src/:/usr/local/src/realtime/src'
       - '../realtime/index.ts:/usr/local/src/realtime/index.ts'
       - './certs/:/etc/ssl/private/'
+  curveball-control:
+    image: curveball/control
+    restart: always
+    ports:
+      - "4200:4200"
+    volumes:
+      - '../curveball-control/src/:/usr/local/src/control/src'
+      - './certs/:/usr/local/src/control/'
 
 
