@@ -3,7 +3,7 @@ import { sleep } from 'sleep';
 import * as signale from 'signale';
 import { migrate } from './migrate';
 import { buildImages } from './build-images';
-import { InfrastructureDir } from '../constants';
+import { InfrastructureDir, DbContainerName } from '../constants';
 
 export async function up() {
     signale.log('Bringing environment up');
@@ -21,6 +21,8 @@ export async function up() {
     while (!successful && attempts <= 15) {
         try {
             await migrate();
+            const adminUserInsertFile = '/var/log/pg_schema/admin_user.sql';
+            await exec(`docker exec -t ${DbContainerName} psql curveball -f ${adminUserInsertFile} postgres`);
             successful = true;
         } catch (e) {
             attempts++;
