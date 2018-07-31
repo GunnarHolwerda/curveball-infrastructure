@@ -43,7 +43,6 @@ services:
     ports:
       - "4200:4200"
     volumes:
-      - '../curveball-control/src/:/usr/local/src/control/src'
-      - './certs/:/usr/local/src/control/'
+      - '../curveball-control/src/:/usr/local/src/curveball-control/src/'
 
 
