@@ -327,7 +327,7 @@ CREATE TABLE quizrunner.users (
     enabled boolean DEFAULT true NOT NULL,
     created timestamp without time zone DEFAULT now() NOT NULL,
     last_accessed timestamp without time zone DEFAULT now() NOT NULL,
-    username character varying(15) NOT NULL,
+    username character varying(15),
     photo text DEFAULT 'http://pixelartmaker.com/art/a27e62d4a45d2bc.png'::text NOT NULL
 );
 
