@@ -1,0 +1,7 @@
+DROP DATABASE IF EXISTS curveball;
+DROP USER IF EXISTS developer;
+
+CREATE DATABASE curveball;
+CREATE USER developer WITH PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE curveball TO developer;
+

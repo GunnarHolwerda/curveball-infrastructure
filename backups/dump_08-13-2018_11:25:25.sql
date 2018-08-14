@@ -1,4 +1,63 @@
 --
+-- PostgreSQL database cluster dump
+--
+
+SET default_transaction_read_only = off;
+
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+
+--
+-- Drop databases
+--
+
+DROP DATABASE admin;
+DROP DATABASE curveball;
+
+
+
+
+--
+-- Drop roles
+--
+
+DROP ROLE admin;
+DROP ROLE developer;
+DROP ROLE postgres;
+
+
+--
+-- Roles
+--
+
+CREATE ROLE admin;
+ALTER ROLE admin WITH SUPERUSER INHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS PASSWORD 'md50ad6d5512f7e31720e807302e404fcbf';
+CREATE ROLE developer;
+ALTER ROLE developer WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS PASSWORD 'md56e2f70c5eb9bff5fecef86e90bdfc12f';
+CREATE ROLE postgres;
+ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION BYPASSRLS;
+
+
+
+
+
+
+--
+-- Database creation
+--
+
+CREATE DATABASE admin WITH TEMPLATE = template0 OWNER = postgres;
+CREATE DATABASE curveball WITH TEMPLATE = template0 OWNER = admin;
+GRANT ALL ON DATABASE curveball TO developer;
+REVOKE CONNECT,TEMPORARY ON DATABASE template1 FROM PUBLIC;
+GRANT CONNECT ON DATABASE template1 TO PUBLIC;
+
+
+\connect admin
+
+SET default_transaction_read_only = off;
+
+--
 -- PostgreSQL database dump
 --
 
@@ -15,51 +74,45 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
-ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_user_fkey;
-ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_quiz_fkey;
-ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_users_referrer_fk;
-ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_users_referred_user_fk;
-ALTER TABLE ONLY quizrunner.questions_choices DROP CONSTRAINT questions_choices_question_id_fkey;
-ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_users_fk;
-ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_question_fk;
-ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_user_id_fkey;
-ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_question_id_fkey;
-ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_choice_id_fkey;
-DROP INDEX quizrunner.winners_user_id_fkey;
-DROP INDEX quizrunner.winners_quiz_id_fkey;
-DROP INDEX quizrunner.quiz_fkey;
-DROP INDEX quizrunner.questions_quiz_fkey;
-DROP INDEX quizrunner.questions_choices_question_id_fkey;
-DROP INDEX quizrunner.answer_submission_user_id_fkey;
-DROP INDEX quizrunner.answer_submission_question_id_fkey;
-DROP INDEX quizrunner.answer_submission_choice_id_fkey;
-ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_pkey;
-ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_username_key;
-ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_pkey;
-ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_phone_key;
-ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_referred_user_key;
-ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_pkey;
-ALTER TABLE ONLY quizrunner.quizzes DROP CONSTRAINT quizzes_pkey;
-ALTER TABLE ONLY quizrunner.questions DROP CONSTRAINT questions_pkey;
-ALTER TABLE ONLY quizrunner.questions_choices DROP CONSTRAINT questions_choices_pkey;
-ALTER TABLE ONLY quizrunner.migrations DROP CONSTRAINT migrations_pkey;
-ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_pkey;
-ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_pkey;
-ALTER TABLE quizrunner.migrations ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE quizrunner.lives ALTER COLUMN id DROP DEFAULT;
-DROP TABLE quizrunner.winners;
-DROP TABLE quizrunner.users;
-DROP TABLE quizrunner.referrals;
-DROP TABLE quizrunner.quizzes;
-DROP TABLE quizrunner.questions_choices;
-DROP TABLE quizrunner.questions;
-DROP SEQUENCE quizrunner.migrations_id_seq;
-DROP TABLE quizrunner.migrations;
-DROP SEQUENCE quizrunner.lives_id_seq;
-DROP TABLE quizrunner.lives;
-DROP TABLE quizrunner.answer_submission;
-DROP FUNCTION quizrunner.random_string(length integer);
-DROP SCHEMA quizrunner;
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\connect curveball
+
+SET default_transaction_read_only = off;
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.4 (Debian 10.4-2.pgdg90+1)
+-- Dumped by pg_dump version 10.4 (Debian 10.4-2.pgdg90+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
 --
 -- Name: quizrunner; Type: SCHEMA; Schema: -; Owner: admin
 --
@@ -68,6 +121,34 @@ CREATE SCHEMA quizrunner;
 
 
 ALTER SCHEMA quizrunner OWNER TO admin;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA quizrunner;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
 
 --
 -- Name: random_string(integer); Type: FUNCTION; Schema: quizrunner; Owner: developer
@@ -317,6 +398,92 @@ ALTER TABLE ONLY quizrunner.migrations ALTER COLUMN id SET DEFAULT nextval('quiz
 
 
 --
+-- Data for Name: answer_submission; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.answer_submission (question_id, user_id, choice_id, submitted) FROM stdin;
+\.
+
+
+--
+-- Data for Name: lives; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.lives (id, user_id, question) FROM stdin;
+\.
+
+
+--
+-- Data for Name: migrations; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.migrations (id, name, run_on) FROM stdin;
+\.
+
+
+--
+-- Data for Name: questions; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.questions (question_id, created, question, sent, expired, question_num, quiz_id, ticker, sport) FROM stdin;
+\.
+
+
+--
+-- Data for Name: questions_choices; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.questions_choices (choice_id, question_id, text, is_answer) FROM stdin;
+\.
+
+
+--
+-- Data for Name: quizzes; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.quizzes (quiz_id, active, title, pot_amount, completed, created) FROM stdin;
+\.
+
+
+--
+-- Data for Name: referrals; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.referrals (referrer, referred_user) FROM stdin;
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.users (user_id, name, phone, enabled, created, last_accessed, username, photo) FROM stdin;
+\.
+
+
+--
+-- Data for Name: winners; Type: TABLE DATA; Schema: quizrunner; Owner: developer
+--
+
+COPY quizrunner.winners (quiz_id, user_id, amount_won) FROM stdin;
+\.
+
+
+--
+-- Name: lives_id_seq; Type: SEQUENCE SET; Schema: quizrunner; Owner: developer
+--
+
+SELECT pg_catalog.setval('quizrunner.lives_id_seq', 1, false);
+
+
+--
+-- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: quizrunner; Owner: developer
+--
+
+SELECT pg_catalog.setval('quizrunner.migrations_id_seq', 1, false);
+
+
+--
 -- Name: answer_submission answer_submission_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
@@ -550,5 +717,101 @@ ALTER TABLE ONLY quizrunner.winners
 
 --
 -- PostgreSQL database dump complete
+--
+
+\connect postgres
+
+SET default_transaction_read_only = off;
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.4 (Debian 10.4-2.pgdg90+1)
+-- Dumped by pg_dump version 10.4 (Debian 10.4-2.pgdg90+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: DATABASE postgres; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON DATABASE postgres IS 'default administrative connection database';
+
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\connect template1
+
+SET default_transaction_read_only = off;
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.4 (Debian 10.4-2.pgdg90+1)
+-- Dumped by pg_dump version 10.4 (Debian 10.4-2.pgdg90+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: DATABASE template1; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON DATABASE template1 IS 'default template for new databases';
+
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- PostgreSQL database cluster dump complete
 --
 

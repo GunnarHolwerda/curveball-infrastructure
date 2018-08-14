@@ -1,9 +1,9 @@
 {
-    "defaultEnv": "dev_qr",
-    "dev_qr": {
+    "defaultEnv": "local_qr",
+    "local_qr": {
         "driver": "pg",
-        "user": "admin",
-        "password": "example",
+        "user": "developer",
+        "password": "password",
         "host": "localhost",
         "database": "curveball",
         "schema": "quizrunner"
