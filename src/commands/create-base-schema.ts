@@ -1,5 +1,6 @@
-import { exec } from 'mz/child_process';
+import { Command } from 'commander';
 import { fs } from 'mz';
+import { exec } from 'mz/child_process';
 import * as signale from 'signale';
 import { DbContainerName } from '../constants';
 
@@ -8,15 +9,17 @@ const VersionFile = 'schema/version.sql';
 
 const BaseDockerDbCommand = `docker exec -t ${DbContainerName}`;
 
-export async function createBaseSchema() {
+export async function createBaseSchema(command: Command) {
     try {
         fs.mkdirSync('schema');
     } catch (e) { }
 
+    const cleanString = command.opts()['onlyCreate'] ? '' : '--clean';
+
     signale.start('Creating base schema files');
     try {
         await Promise.all([
-            exec(`${BaseDockerDbCommand} pg_dump --clean --schema-only -U admin curveball > ${BaseSchemaFile}`),
+            exec(`${BaseDockerDbCommand} pg_dump ${cleanString} --schema-only --schema=quizrunner -U admin curveball > ${BaseSchemaFile}`),
             exec(`${BaseDockerDbCommand} pg_dump -U admin --table=quizrunner.migrations --data-only curveball > ${VersionFile}`)
         ]);
         signale.success('Complete.');

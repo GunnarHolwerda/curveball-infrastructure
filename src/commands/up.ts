@@ -1,11 +1,12 @@
+import { Command } from 'commander';
 import { exec } from 'mz/child_process';
-import { sleep } from 'sleep';
 import * as signale from 'signale';
-import { migrate } from './migrate';
+import { sleep } from 'sleep';
+import { DbContainerName, InfrastructureDir } from '../constants';
 import { buildImages } from './build-images';
-import { InfrastructureDir, DbContainerName } from '../constants';
+import { migrate } from './migrate';
 
-export async function up() {
+export async function up(command: Command) {
     signale.log('Bringing environment up');
     try {
         await buildImages();
@@ -20,7 +21,7 @@ export async function up() {
     let attempts = 0;
     while (!successful && attempts <= 15) {
         try {
-            await migrate();
+            await migrate(command);
             const adminUserInsertFile = '/var/log/pg_schema/admin_user.sql';
             await exec(`docker exec -t ${DbContainerName} psql curveball -f ${adminUserInsertFile} postgres`);
             successful = true;
