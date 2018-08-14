@@ -10,7 +10,7 @@ export async function backup() {
     } catch (e) { }
     signale.pending('Starting backup');
     signale.time('backup');
-    const date = moment().format('MM-DD-YYYY_h:mm:ss');
+    const date = moment().format('MM-DD-YYYY_h-mm-ss');
     await exec(
         `docker exec -t ${DbContainerName} pg_dumpall -c -U admin > ${BackUpDir}/dump_${date}.sql`
     );
