@@ -59,27 +59,7 @@ DROP SEQUENCE quizrunner.lives_id_seq;
 DROP TABLE quizrunner.lives;
 DROP TABLE quizrunner.answer_submission;
 DROP FUNCTION quizrunner.random_string(length integer);
-DROP FUNCTION public.random_string(length integer);
-DROP EXTENSION "uuid-ossp";
-DROP EXTENSION plpgsql;
 DROP SCHEMA quizrunner;
-DROP SCHEMA public;
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
---
-
-CREATE SCHEMA public;
-
-
-ALTER SCHEMA public OWNER TO postgres;
-
---
--- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON SCHEMA public IS 'standard public schema';
-
-
 --
 -- Name: quizrunner; Type: SCHEMA; Schema: -; Owner: admin
 --
@@ -90,89 +70,64 @@ CREATE SCHEMA quizrunner;
 ALTER SCHEMA quizrunner OWNER TO admin;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
-
-
---
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
-
-
---
--- Name: random_string(integer); Type: FUNCTION; Schema: public; Owner: admin
---
-
-CREATE FUNCTION public.random_string(length integer) RETURNS text
-    LANGUAGE plpgsql
-    AS $$
-declare
-  chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
-  result text := '';
-  i integer := 0;
-begin
-  if length < 0 then
-    raise exception 'Given length cannot be less than 0';
-  end if;
-  for i in 1..length loop
-    result := result || chars[1+random()*(array_length(chars, 1)-1)];
-  end loop;
-  return result;
-end;
-$$;
-
-
-ALTER FUNCTION public.random_string(length integer) OWNER TO admin;
-
---
--- Name: random_string(integer); Type: FUNCTION; Schema: quizrunner; Owner: admin
+-- Name: random_string(integer); Type: FUNCTION; Schema: quizrunner; Owner: developer
 --
 
 CREATE FUNCTION quizrunner.random_string(length integer) RETURNS text
     LANGUAGE plpgsql
-    AS $$
-  declare
-    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
-    result text := '';
-    i integer := 0;
-  begin
-    if length < 0 then
-      raise exception 'Given length cannot be less than 0';
-    end if;
-    for i in 1..length loop
-      result := result || chars[1+random()*(array_length(chars, 1)-1)];
-    end loop;
-    return result;
-  end;
+    AS $$
+
+
+  declare
+
+
+    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+
+
+    result text := '';
+
+
+    i integer := 0;
+
+
+  begin
+
+
+    if length < 0 then
+
+
+      raise exception 'Given length cannot be less than 0';
+
+
+    end if;
+
+
+    for i in 1..length loop
+
+
+      result := result || chars[1+random()*(array_length(chars, 1)-1)];
+
+
+    end loop;
+
+
+    return result;
+
+
+  end;
+
+
   $$;
 
 
-ALTER FUNCTION quizrunner.random_string(length integer) OWNER TO admin;
+ALTER FUNCTION quizrunner.random_string(length integer) OWNER TO developer;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: answer_submission; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: answer_submission; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.answer_submission (
@@ -183,10 +138,10 @@ CREATE TABLE quizrunner.answer_submission (
 );
 
 
-ALTER TABLE quizrunner.answer_submission OWNER TO admin;
+ALTER TABLE quizrunner.answer_submission OWNER TO developer;
 
 --
--- Name: lives; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: lives; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.lives (
@@ -196,10 +151,10 @@ CREATE TABLE quizrunner.lives (
 );
 
 
-ALTER TABLE quizrunner.lives OWNER TO admin;
+ALTER TABLE quizrunner.lives OWNER TO developer;
 
 --
--- Name: lives_id_seq; Type: SEQUENCE; Schema: quizrunner; Owner: admin
+-- Name: lives_id_seq; Type: SEQUENCE; Schema: quizrunner; Owner: developer
 --
 
 CREATE SEQUENCE quizrunner.lives_id_seq
@@ -211,17 +166,17 @@ CREATE SEQUENCE quizrunner.lives_id_seq
     CACHE 1;
 
 
-ALTER TABLE quizrunner.lives_id_seq OWNER TO admin;
+ALTER TABLE quizrunner.lives_id_seq OWNER TO developer;
 
 --
--- Name: lives_id_seq; Type: SEQUENCE OWNED BY; Schema: quizrunner; Owner: admin
+-- Name: lives_id_seq; Type: SEQUENCE OWNED BY; Schema: quizrunner; Owner: developer
 --
 
 ALTER SEQUENCE quizrunner.lives_id_seq OWNED BY quizrunner.lives.id;
 
 
 --
--- Name: migrations; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: migrations; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.migrations (
@@ -231,10 +186,10 @@ CREATE TABLE quizrunner.migrations (
 );
 
 
-ALTER TABLE quizrunner.migrations OWNER TO admin;
+ALTER TABLE quizrunner.migrations OWNER TO developer;
 
 --
--- Name: migrations_id_seq; Type: SEQUENCE; Schema: quizrunner; Owner: admin
+-- Name: migrations_id_seq; Type: SEQUENCE; Schema: quizrunner; Owner: developer
 --
 
 CREATE SEQUENCE quizrunner.migrations_id_seq
@@ -246,21 +201,21 @@ CREATE SEQUENCE quizrunner.migrations_id_seq
     CACHE 1;
 
 
-ALTER TABLE quizrunner.migrations_id_seq OWNER TO admin;
+ALTER TABLE quizrunner.migrations_id_seq OWNER TO developer;
 
 --
--- Name: migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: quizrunner; Owner: admin
+-- Name: migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: quizrunner; Owner: developer
 --
 
 ALTER SEQUENCE quizrunner.migrations_id_seq OWNED BY quizrunner.migrations.id;
 
 
 --
--- Name: questions; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: questions; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.questions (
-    question_id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    question_id uuid DEFAULT quizrunner.uuid_generate_v4() NOT NULL,
     created timestamp without time zone DEFAULT now() NOT NULL,
     question text NOT NULL,
     sent timestamp without time zone,
@@ -272,28 +227,28 @@ CREATE TABLE quizrunner.questions (
 );
 
 
-ALTER TABLE quizrunner.questions OWNER TO admin;
+ALTER TABLE quizrunner.questions OWNER TO developer;
 
 --
--- Name: questions_choices; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: questions_choices; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.questions_choices (
-    choice_id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    choice_id uuid DEFAULT quizrunner.uuid_generate_v4() NOT NULL,
     question_id uuid NOT NULL,
     text character varying(64) NOT NULL,
     is_answer boolean DEFAULT false NOT NULL
 );
 
 
-ALTER TABLE quizrunner.questions_choices OWNER TO admin;
+ALTER TABLE quizrunner.questions_choices OWNER TO developer;
 
 --
--- Name: quizzes; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: quizzes; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.quizzes (
-    quiz_id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    quiz_id uuid DEFAULT quizrunner.uuid_generate_v4() NOT NULL,
     active boolean DEFAULT false NOT NULL,
     title text NOT NULL,
     pot_amount bigint DEFAULT '0'::bigint NOT NULL,
@@ -302,10 +257,10 @@ CREATE TABLE quizrunner.quizzes (
 );
 
 
-ALTER TABLE quizrunner.quizzes OWNER TO admin;
+ALTER TABLE quizrunner.quizzes OWNER TO developer;
 
 --
--- Name: referrals; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: referrals; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.referrals (
@@ -314,14 +269,14 @@ CREATE TABLE quizrunner.referrals (
 );
 
 
-ALTER TABLE quizrunner.referrals OWNER TO admin;
+ALTER TABLE quizrunner.referrals OWNER TO developer;
 
 --
--- Name: users; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: users; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.users (
-    user_id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    user_id uuid DEFAULT quizrunner.uuid_generate_v4() NOT NULL,
     name character varying(255),
     phone character varying(15) NOT NULL,
     enabled boolean DEFAULT true NOT NULL,
@@ -332,10 +287,10 @@ CREATE TABLE quizrunner.users (
 );
 
 
-ALTER TABLE quizrunner.users OWNER TO admin;
+ALTER TABLE quizrunner.users OWNER TO developer;
 
 --
--- Name: winners; Type: TABLE; Schema: quizrunner; Owner: admin
+-- Name: winners; Type: TABLE; Schema: quizrunner; Owner: developer
 --
 
 CREATE TABLE quizrunner.winners (
@@ -345,24 +300,24 @@ CREATE TABLE quizrunner.winners (
 );
 
 
-ALTER TABLE quizrunner.winners OWNER TO admin;
+ALTER TABLE quizrunner.winners OWNER TO developer;
 
 --
--- Name: lives id; Type: DEFAULT; Schema: quizrunner; Owner: admin
+-- Name: lives id; Type: DEFAULT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.lives ALTER COLUMN id SET DEFAULT nextval('quizrunner.lives_id_seq'::regclass);
 
 
 --
--- Name: migrations id; Type: DEFAULT; Schema: quizrunner; Owner: admin
+-- Name: migrations id; Type: DEFAULT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.migrations ALTER COLUMN id SET DEFAULT nextval('quizrunner.migrations_id_seq'::regclass);
 
 
 --
--- Name: answer_submission answer_submission_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: answer_submission answer_submission_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.answer_submission
@@ -370,7 +325,7 @@ ALTER TABLE ONLY quizrunner.answer_submission
 
 
 --
--- Name: lives lives_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: lives lives_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.lives
@@ -378,7 +333,7 @@ ALTER TABLE ONLY quizrunner.lives
 
 
 --
--- Name: migrations migrations_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: migrations migrations_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.migrations
@@ -386,7 +341,7 @@ ALTER TABLE ONLY quizrunner.migrations
 
 
 --
--- Name: questions_choices questions_choices_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: questions_choices questions_choices_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.questions_choices
@@ -394,7 +349,7 @@ ALTER TABLE ONLY quizrunner.questions_choices
 
 
 --
--- Name: questions questions_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: questions questions_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.questions
@@ -402,7 +357,7 @@ ALTER TABLE ONLY quizrunner.questions
 
 
 --
--- Name: quizzes quizzes_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: quizzes quizzes_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.quizzes
@@ -410,7 +365,7 @@ ALTER TABLE ONLY quizrunner.quizzes
 
 
 --
--- Name: referrals referrals_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: referrals referrals_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.referrals
@@ -418,7 +373,7 @@ ALTER TABLE ONLY quizrunner.referrals
 
 
 --
--- Name: referrals referrals_referred_user_key; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: referrals referrals_referred_user_key; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.referrals
@@ -426,7 +381,7 @@ ALTER TABLE ONLY quizrunner.referrals
 
 
 --
--- Name: users users_phone_key; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: users users_phone_key; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.users
@@ -434,7 +389,7 @@ ALTER TABLE ONLY quizrunner.users
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.users
@@ -442,7 +397,7 @@ ALTER TABLE ONLY quizrunner.users
 
 
 --
--- Name: users users_username_key; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: users users_username_key; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.users
@@ -450,7 +405,7 @@ ALTER TABLE ONLY quizrunner.users
 
 
 --
--- Name: winners winners_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: winners winners_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.winners
@@ -458,63 +413,63 @@ ALTER TABLE ONLY quizrunner.winners
 
 
 --
--- Name: answer_submission_choice_id_fkey; Type: INDEX; Schema: quizrunner; Owner: admin
+-- Name: answer_submission_choice_id_fkey; Type: INDEX; Schema: quizrunner; Owner: developer
 --
 
 CREATE INDEX answer_submission_choice_id_fkey ON quizrunner.answer_submission USING btree (choice_id);
 
 
 --
--- Name: answer_submission_question_id_fkey; Type: INDEX; Schema: quizrunner; Owner: admin
+-- Name: answer_submission_question_id_fkey; Type: INDEX; Schema: quizrunner; Owner: developer
 --
 
 CREATE INDEX answer_submission_question_id_fkey ON quizrunner.answer_submission USING btree (question_id);
 
 
 --
--- Name: answer_submission_user_id_fkey; Type: INDEX; Schema: quizrunner; Owner: admin
+-- Name: answer_submission_user_id_fkey; Type: INDEX; Schema: quizrunner; Owner: developer
 --
 
 CREATE INDEX answer_submission_user_id_fkey ON quizrunner.answer_submission USING btree (user_id);
 
 
 --
--- Name: questions_choices_question_id_fkey; Type: INDEX; Schema: quizrunner; Owner: admin
+-- Name: questions_choices_question_id_fkey; Type: INDEX; Schema: quizrunner; Owner: developer
 --
 
 CREATE INDEX questions_choices_question_id_fkey ON quizrunner.questions_choices USING btree (question_id);
 
 
 --
--- Name: questions_quiz_fkey; Type: INDEX; Schema: quizrunner; Owner: admin
+-- Name: questions_quiz_fkey; Type: INDEX; Schema: quizrunner; Owner: developer
 --
 
 CREATE INDEX questions_quiz_fkey ON quizrunner.questions USING btree (quiz_id);
 
 
 --
--- Name: quiz_fkey; Type: INDEX; Schema: quizrunner; Owner: admin
+-- Name: quiz_fkey; Type: INDEX; Schema: quizrunner; Owner: developer
 --
 
 CREATE INDEX quiz_fkey ON quizrunner.questions USING btree (quiz_id);
 
 
 --
--- Name: winners_quiz_id_fkey; Type: INDEX; Schema: quizrunner; Owner: admin
+-- Name: winners_quiz_id_fkey; Type: INDEX; Schema: quizrunner; Owner: developer
 --
 
 CREATE INDEX winners_quiz_id_fkey ON quizrunner.winners USING btree (quiz_id);
 
 
 --
--- Name: winners_user_id_fkey; Type: INDEX; Schema: quizrunner; Owner: admin
+-- Name: winners_user_id_fkey; Type: INDEX; Schema: quizrunner; Owner: developer
 --
 
 CREATE INDEX winners_user_id_fkey ON quizrunner.winners USING btree (user_id);
 
 
 --
--- Name: answer_submission answer_submission_choice_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: answer_submission answer_submission_choice_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.answer_submission
@@ -522,7 +477,7 @@ ALTER TABLE ONLY quizrunner.answer_submission
 
 
 --
--- Name: answer_submission answer_submission_question_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: answer_submission answer_submission_question_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.answer_submission
@@ -530,7 +485,7 @@ ALTER TABLE ONLY quizrunner.answer_submission
 
 
 --
--- Name: answer_submission answer_submission_user_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: answer_submission answer_submission_user_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.answer_submission
@@ -538,7 +493,7 @@ ALTER TABLE ONLY quizrunner.answer_submission
 
 
 --
--- Name: lives lives_question_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: lives lives_question_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.lives
@@ -546,7 +501,7 @@ ALTER TABLE ONLY quizrunner.lives
 
 
 --
--- Name: lives lives_users_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: lives lives_users_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.lives
@@ -554,7 +509,7 @@ ALTER TABLE ONLY quizrunner.lives
 
 
 --
--- Name: questions_choices questions_choices_question_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: questions_choices questions_choices_question_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.questions_choices
@@ -562,7 +517,7 @@ ALTER TABLE ONLY quizrunner.questions_choices
 
 
 --
--- Name: referrals referrals_users_referred_user_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: referrals referrals_users_referred_user_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.referrals
@@ -570,7 +525,7 @@ ALTER TABLE ONLY quizrunner.referrals
 
 
 --
--- Name: referrals referrals_users_referrer_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: referrals referrals_users_referrer_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.referrals
@@ -578,7 +533,7 @@ ALTER TABLE ONLY quizrunner.referrals
 
 
 --
--- Name: winners winners_quiz_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: winners winners_quiz_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.winners
@@ -586,18 +541,11 @@ ALTER TABLE ONLY quizrunner.winners
 
 
 --
--- Name: winners winners_user_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: admin
+-- Name: winners winners_user_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
 --
 
 ALTER TABLE ONLY quizrunner.winners
     ADD CONSTRAINT winners_user_fkey FOREIGN KEY (user_id) REFERENCES quizrunner.users(user_id);
-
-
---
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
---
-
-GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --

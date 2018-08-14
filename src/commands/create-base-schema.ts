@@ -19,7 +19,9 @@ export async function createBaseSchema(command: Command) {
     signale.start('Creating base schema files');
     try {
         await Promise.all([
-            exec(`${BaseDockerDbCommand} pg_dump ${cleanString} --schema-only --schema=quizrunner -U admin curveball > ${BaseSchemaFile}`),
+            exec(
+                `${BaseDockerDbCommand} pg_dump -U admin ${cleanString} --schema-only --schema=quizrunner curveball > ${BaseSchemaFile}`
+            ),
             exec(`${BaseDockerDbCommand} pg_dump -U admin --table=quizrunner.migrations --data-only curveball > ${VersionFile}`)
         ]);
         signale.success('Complete.');

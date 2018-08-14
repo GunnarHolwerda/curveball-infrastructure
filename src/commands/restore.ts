@@ -15,7 +15,7 @@ export async function restore() {
     const fileContents = await fs.readFile(latestBackup, 'utf8');
     const contents = fileContents.replace(/(?:\r\n|\r|\n)/g, ' ');
     await fs.writeFile(latestBackup, contents, 'utf8');
-    await exec(`docker exec -t ${DbContainerName} psql admin -f ${dockerDir}/${latestBackup} postgres`);
+    await exec(`docker exec -t ${DbContainerName} psql developer -f ${dockerDir}/${latestBackup}`);
     signale.timeEnd('restore');
     signale.success('Restore completed');
 }
