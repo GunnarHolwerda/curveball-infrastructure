@@ -15,59 +15,42 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
-ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_user_fkey;
-ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_quiz_fkey;
-ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_users_referrer_fk;
-ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_users_referred_user_fk;
-ALTER TABLE ONLY quizrunner.questions_choices DROP CONSTRAINT questions_choices_question_id_fkey;
-ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_users_fk;
-ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_question_fk;
-ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_user_id_fkey;
-ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_question_id_fkey;
-ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_choice_id_fkey;
-DROP INDEX quizrunner.winners_user_id_fkey;
-DROP INDEX quizrunner.winners_quiz_id_fkey;
-DROP INDEX quizrunner.quiz_fkey;
-DROP INDEX quizrunner.questions_quiz_fkey;
-DROP INDEX quizrunner.questions_choices_question_id_fkey;
-DROP INDEX quizrunner.answer_submission_user_id_fkey;
-DROP INDEX quizrunner.answer_submission_question_id_fkey;
-DROP INDEX quizrunner.answer_submission_choice_id_fkey;
-ALTER TABLE ONLY quizrunner.winners DROP CONSTRAINT winners_pkey;
-ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_username_key;
-ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_pkey;
-ALTER TABLE ONLY quizrunner.users DROP CONSTRAINT users_phone_key;
-ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_referred_user_key;
-ALTER TABLE ONLY quizrunner.referrals DROP CONSTRAINT referrals_pkey;
-ALTER TABLE ONLY quizrunner.quizzes DROP CONSTRAINT quizzes_pkey;
-ALTER TABLE ONLY quizrunner.questions DROP CONSTRAINT questions_pkey;
-ALTER TABLE ONLY quizrunner.questions_choices DROP CONSTRAINT questions_choices_pkey;
-ALTER TABLE ONLY quizrunner.migrations DROP CONSTRAINT migrations_pkey;
-ALTER TABLE ONLY quizrunner.lives DROP CONSTRAINT lives_pkey;
-ALTER TABLE ONLY quizrunner.answer_submission DROP CONSTRAINT answer_submission_pkey;
-ALTER TABLE quizrunner.migrations ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE quizrunner.lives ALTER COLUMN id DROP DEFAULT;
-DROP TABLE quizrunner.winners;
-DROP TABLE quizrunner.users;
-DROP TABLE quizrunner.referrals;
-DROP TABLE quizrunner.quizzes;
-DROP TABLE quizrunner.questions_choices;
-DROP TABLE quizrunner.questions;
-DROP SEQUENCE quizrunner.migrations_id_seq;
-DROP TABLE quizrunner.migrations;
-DROP SEQUENCE quizrunner.lives_id_seq;
-DROP TABLE quizrunner.lives;
-DROP TABLE quizrunner.answer_submission;
-DROP FUNCTION quizrunner.random_string(length integer);
-DROP SCHEMA quizrunner;
 --
--- Name: quizrunner; Type: SCHEMA; Schema: -; Owner: admin
+-- Name: quizrunner; Type: SCHEMA; Schema: -; Owner: developer
 --
 
 CREATE SCHEMA quizrunner;
 
 
-ALTER SCHEMA quizrunner OWNER TO admin;
+ALTER SCHEMA quizrunner OWNER TO developer;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA quizrunner;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
 
 --
 -- Name: random_string(integer); Type: FUNCTION; Schema: quizrunner; Owner: developer
@@ -75,48 +58,48 @@ ALTER SCHEMA quizrunner OWNER TO admin;
 
 CREATE FUNCTION quizrunner.random_string(length integer) RETURNS text
     LANGUAGE plpgsql
-    AS $$
-
-
-  declare
-
-
-    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
-
-
-    result text := '';
-
-
-    i integer := 0;
-
-
-  begin
-
-
-    if length < 0 then
-
-
-      raise exception 'Given length cannot be less than 0';
-
-
-    end if;
-
-
-    for i in 1..length loop
-
-
-      result := result || chars[1+random()*(array_length(chars, 1)-1)];
-
-
-    end loop;
-
-
-    return result;
-
-
-  end;
-
-
+    AS $$
+
+
+  declare
+
+
+    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+
+
+    result text := '';
+
+
+    i integer := 0;
+
+
+  begin
+
+
+    if length < 0 then
+
+
+      raise exception 'Given length cannot be less than 0';
+
+
+    end if;
+
+
+    for i in 1..length loop
+
+
+      result := result || chars[1+random()*(array_length(chars, 1)-1)];
+
+
+    end loop;
+
+
+    return result;
+
+
+  end;
+
+
   $$;
 
 
@@ -514,6 +497,14 @@ ALTER TABLE ONLY quizrunner.lives
 
 ALTER TABLE ONLY quizrunner.questions_choices
     ADD CONSTRAINT questions_choices_question_id_fkey FOREIGN KEY (question_id) REFERENCES quizrunner.questions(question_id);
+
+
+--
+-- Name: questions quiz_id; Type: FK CONSTRAINT; Schema: quizrunner; Owner: developer
+--
+
+ALTER TABLE ONLY quizrunner.questions
+    ADD CONSTRAINT quiz_id FOREIGN KEY (quiz_id) REFERENCES quizrunner.quizzes(quiz_id);
 
 
 --

@@ -14,13 +14,14 @@ export async function createBaseSchema(command: Command) {
         fs.mkdirSync('schema');
     } catch (e) { }
 
-    const cleanString = command.opts()['onlyCreate'] ? '' : '--clean';
+    const createString = command.opts()['onlyCreate'] ? '--create' : '';
 
     signale.start('Creating base schema files');
     try {
         await Promise.all([
             exec(
-                `${BaseDockerDbCommand} pg_dump -U admin ${cleanString} --schema-only --schema=quizrunner curveball > ${BaseSchemaFile}`
+                `${BaseDockerDbCommand} pg_dump -U admin ${createString} --schema-only ` +
+                `-N "public" -N "pg_catalog" curveball > ${BaseSchemaFile.replace('.sql', `${createString}.sql`)}`
             ),
             exec(`${BaseDockerDbCommand} pg_dump -U admin --table=quizrunner.migrations --data-only curveball > ${VersionFile}`)
         ]);
