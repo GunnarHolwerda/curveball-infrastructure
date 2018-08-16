@@ -1,3 +1,4 @@
+#!/bin/sh
 ### Realtime EC2
 # Create realtime security group
 aws ec2 create-security-group --group-name curveball-realtime-sg --description "Curveball Realtime SG"
@@ -15,9 +16,9 @@ aws rds create-db-instance --db-security-groups curveball-db-sg --engine postgre
 
 ### Elasticache
 # Create Cache Security group
-aws elasticache create-cache-security-group --cache-security-group-name curveball-cache-sg --description "Security group for access to redis cache"
+aws ec2 create-security-group --group-name curveball-cache-sg --description "Security group for access to redis cache"
 # Create Cluster
-aws elasticache create-cache-cluster --cache-cluster-id curveball-cluster --cache-node-type cache.t2.micro --engine redis --engine-version 4.0 --num-cache-nodes 1
+aws elasticache create-cache-cluster --cache-cluster-id curveball-cluster --cache-node-type cache.t2.micro --engine redis --engine-version 4.0 --num-cache-nodes 1 --cache-security-group-names curveball-cache-sg
 
 ### Lambda Quiz Endpoints
 # Create quiz endpoints security group
