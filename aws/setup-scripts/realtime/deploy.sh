@@ -4,8 +4,8 @@ KEY_FILE="~/Programming/curveball/dev-files/CurveballKey.pem"
 INSTANCE_IP="34.215.65.54"
 
 ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'bash -s' < ./realtime-setup.sh
-scp -i $KEY_FILE -r ./realtime-initd-script.sh ec2-user@$INSTANCE_IP:/etc/init.d/curveball-realtime/
-ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "chmod 0770 /etc/init.d/curveball-realtime/realtime-initd-script.sh"
-scp -i $KEY_FILE -r "~/Programming/curveball/dev-files/realtime/.env" ec2-user@$INSTANCE_IP:/home/ec2-user/realtime/
-ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "update-rc.d curveball-realtime defaults"
-ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "service curveball-realtime start"
+scp -i $KEY_FILE -r ./curveball-realtime.service ec2-user@$INSTANCE_IP:/home/ec2-user
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "sudo cp ~/curveball-realtime.service /lib/systemd/system/curveball-realtime.service"
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "sudo systemctl daemon-reload"
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "sudo systemctl enable curveball-realtime"
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "sudo systemctl start curveball-realtime"

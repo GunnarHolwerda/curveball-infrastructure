@@ -1,0 +1,13 @@
+[Unit]
+Description=curveball-realtime the realtime server for curveball
+After=network.target
+
+[Service]
+Environment=REDIS_HOST=curveball-cluster.vsuptq.0001.usw2.cache.amazonaws.com,REDIS_PORT=6379,NODE_ENV=production,SSL_CERT_PATH=/etc/ssl/private/cert.pem,SSL_CERT_KEY=/etc/ssl/private/key.pem,JWT_SECRET=sEcReT,INTERNAL_SECRET=VerySecret
+Type=simple
+User=ec2-user
+ExecStart=/usr/bin/npm run start --prefix ~/realtime > /var/log/curveball-realtime.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
