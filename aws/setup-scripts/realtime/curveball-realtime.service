@@ -6,13 +6,13 @@ After=network.target
 Environment=REDIS_HOST=curveball-cluster.vsuptq.0001.usw2.cache.amazonaws.com
 Environment=REDIS_PORT=6379
 Environment=NODE_ENV=production
-Enironment=SSL_CERT_PATH=/etc/ssl/private/cert.pem
-Environment=SSL_CERT_KEY=/etc/ssl/private/key.pem
 Environment=JWT_SECRET=sEcReT
 Environment=INTERNAL_SECRET=VerySecret
+Environment=ALLOWED_ORIGINS=foo
+Environment=SSL_KEY=/home/ec2-user/realtime/etc/key.pem
+Environment=SSL_CERT=/home/ec2-user/realtime/etc/server.crt
 Type=simple
-User=ec2-user
-ExecStart=/usr/bin/npm run start --prefix ~/realtime > /var/log/curveball-realtime.log
+ExecStart=/usr/bin/npm run start:prod --prefix /home/ec2-user/realtime
 Restart=on-failure
 
 [Install]
