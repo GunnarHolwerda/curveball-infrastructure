@@ -42,7 +42,7 @@ aws ec2 authorize-security-group-ingress --group-name curveball-realtime-sg --so
 # Load balancer
 aws ec2 create-security-group --group-name curveball-realtime-lb-sg --description "Security group for realtime load balancer"
 aws ec2 authorize-security-group-ingress --group-name curveball-realtime-lb-sg --protocol tcp --port 443 --cidr 73.96.78.57/32
-aws elbv2 create-target-group --name curveball-dev-realtime-instances --target-type ip --protocol HTTPS --port 443 --vpc-id vpc-bc5429d4 --health-check-protocol HTTP --health-check-path /health-check --health-check-port 3001
+aws elbv2 create-target-group --name curveball-dev-realtime-instances --target-type ip --protocol HTTPS --port 443 --vpc-id vpc-bc5429d4 --health-check-protocol HTTPS --health-check-path /health-check --health-check-port 3001
 # This requires the arn from the target group created above, requires private ip address of realtime ec2 instances
 aws elbv2 register-targets --target-group-arn arn:aws:elasticloadbalancing:us-west-2:344946851001:targetgroup/curveball-dev-realtime-instances/a5ceb867a5c389c7 --targets Id=172.31.33.142,Port=3001
 aws elbv2 create-load-balancer --name curveball-dev-realtime-lb --subnets subnet-bf5429d7 subnet-be5429d6 --security-groups curveball-realtime-lb-sg
