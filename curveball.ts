@@ -10,18 +10,20 @@ import { migrate } from './src/commands/migrate';
 import { restore } from './src/commands/restore';
 import { up } from './src/commands/up';
 import { CurveballControlDir, InfrastructureDir, QuizDir, RealtimeDir } from './src/constants';
+import { reload } from './src/commands/reload';
 
 const projectDirs = [InfrastructureDir, RealtimeDir, QuizDir, CurveballControlDir];
 const dirChecks = projectDirs.map(d => fs.exists(d));
 
 program.command('create-base-schema').option('--only-create', 'Only include creation commands in sql file').action(createBaseSchema);
 program.command('clean-db').action(cleanDb);
-program.command('backup').alias('b').action(backup);
-program.command('restore').alias('r').action(restore);
+program.command('backup').action(backup);
+program.command('restore').action(restore);
 program.command('ssl').action(encrypt);
 program.command('build-images').alias('bi').action(buildImages);
-program.command('migrate').alias('m').action(migrate);
+program.command('migrate').action(migrate);
 program.command('up').alias('u').action(up);
+program.command('reload').alias('r').action(reload);
 
 // tslint:disable-next-line
 (async () => {

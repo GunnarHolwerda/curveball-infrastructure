@@ -2,20 +2,19 @@ import { Command } from 'commander';
 import { exec } from 'mz/child_process';
 import * as signale from 'signale';
 import { sleep } from 'sleep';
-import { DbContainerName, InfrastructureDir } from '../constants';
+import { DbContainerName } from '../constants';
 import { buildImages } from './build-images';
 import { migrate } from './migrate';
 import { cleanDb } from './clean-db';
+import { reload } from './reload';
 
 export async function up(command: Command) {
-    signale.info('Bringing environment up');
     try {
         await buildImages();
     } catch (e) {
         return;
     }
-    await exec(`cd ${InfrastructureDir} && docker-compose down`);
-    await exec(`cd ${InfrastructureDir} && docker-compose up -d`);
+    await reload();
     let successful = false;
     const secondsToSleep = 2;
     let running = false;
