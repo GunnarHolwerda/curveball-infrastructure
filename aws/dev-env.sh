@@ -23,6 +23,7 @@ aws elasticache create-cache-cluster --cache-cluster-id curveball-cluster --cach
 ### Lambda Quiz Endpoints
 # Create quiz endpoints security group
 aws ec2 create-security-group --group-name curveball-quiz-sg --description "Security group for AWS lambda quiz functions"
+aws ec2 authorize-security-group-ingress --group-name curveball-quiz-sg --protocol tcp --port 443 --cidr 73.96.78.57/32
 
 ### Curveball Controller
 # Create S3 bucket for controller

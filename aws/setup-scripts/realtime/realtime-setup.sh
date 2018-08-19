@@ -12,3 +12,5 @@ openssl req -newkey rsa:2048 -new -nodes -keyout etc/key.pem -out etc/csr.pem -s
 openssl x509 -req -days 365 -in etc/csr.pem -signkey etc/key.pem -out etc/server.crt -days 15000
 curl -H "Authorization: token f914916b1886cd4793ae2465a2b08ebd99714b89" -L https://api.github.com/repos/GunnarHolwerda/QuizRealtime/tarball/develop | tar -xz --strip=1
 npm install
+
+# To follow logs of realtime service: sudo journalctl -u curveball-realtime -f
