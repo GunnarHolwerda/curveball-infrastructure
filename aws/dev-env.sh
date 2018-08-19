@@ -28,6 +28,7 @@ aws ec2 authorize-security-group-ingress --group-name curveball-quiz-sg --protoc
 ### Curveball Controller
 # Create S3 bucket for controller
 aws s3api create-bucket --bucket dev-curveball-controller --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
+aws s3api put-bucket-policy --bucket dev-curveball-controller --policy file://~/Programming/curveball/infrastructure/aws/policies/controller-bucket-policy.json
 # Enable bucket for static website hosting
 aws s3 website s3://dev-curveball-controller/ --index-document index.html --error-document index.html
 
@@ -37,22 +38,19 @@ aws ec2 authorize-security-group-ingress --group-name curveball-cache-sg --sourc
 aws ec2 authorize-security-group-ingress --group-name curveball-db-sg --source-group curveball-quiz-sg --protocol tcp --port 5432
 aws ec2 authorize-security-group-ingress --group-name curveball-realtime-sg --source-group curveball-realtime-lb-sg --protocol tcp --port 3001
 
-# Route 53
-# aws route53 create-hosted-zone --name curveball.tv --caller-reference "$(date '+%Y-%m-%d %H:%M:%S')"
-
 # Load balancer
 aws ec2 create-security-group --group-name curveball-realtime-lb-sg --description "Security group for realtime load balancer"
 aws ec2 authorize-security-group-ingress --group-name curveball-realtime-lb-sg --protocol tcp --port 443 --cidr 73.96.78.57/32
 aws elbv2 create-target-group --name curveball-dev-realtime-instances --target-type ip --protocol HTTPS --port 443 --vpc-id vpc-bc5429d4 --health-check-protocol HTTPS --health-check-path /health-check --health-check-port 3001
 # This requires the arn from the target group created above, requires private ip address of realtime ec2 instances
 aws elbv2 register-targets --target-group-arn arn:aws:elasticloadbalancing:us-west-2:344946851001:targetgroup/curveball-dev-realtime-instances/a5ceb867a5c389c7 --targets Id=172.31.33.142,Port=3001
-aws elbv2 create-load-balancer --name curveball-dev-realtime-lb --subnets subnet-bf5429d7 subnet-be5429d6 --security-groups curveball-realtime-lb-sg
+aws elbv2 create-load-balancer --name curveball-dev-realtime-lb --subnets subnet-bf5429d7 subnet-be5429d6 --security-groups sg-0061b6f0b4cdc18fb
 # This requires the arn from the target group created above
 aws elbv2 create-listener  \
---load-balancer-arn arn:aws:elasticloadbalancing:us-west-2:344946851001:loadbalancer/app/curveball-dev-realtime-lb/3f7d432958a1633a \
+--load-balancer-arn arn:aws:elasticloadbalancing:us-west-2:344946851001:loadbalancer/app/curveball-dev-realtime-lb/a633b6eedd0e6ded \
 --protocol HTTPS \
 --port 443 \
---certificates CertificateArn=arn:aws:acm:us-west-2:344946851001:certificate/7f116a48-476c-4488-94a0-0797556d7358 \
+--certificates CertificateArn=	arn:aws:acm:us-west-2:344946851001:certificate/d1753012-04f4-4ac7-a3f6-6e324d576232 \
 --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:us-west-2:344946851001:targetgroup/curveball-dev-realtime-instances/a5ceb867a5c389c7
 
 # TODO: Create listener to return 503 if no healthy instances 
