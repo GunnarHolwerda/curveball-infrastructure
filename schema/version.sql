@@ -16,7 +16,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: migrations; Type: TABLE DATA; Schema: quizrunner; Owner: admin
+-- Data for Name: migrations; Type: TABLE DATA; Schema: quizrunner; Owner: developer
 --
 
 COPY quizrunner.migrations (id, name, run_on) FROM stdin;
@@ -24,14 +24,15 @@ COPY quizrunner.migrations (id, name, run_on) FROM stdin;
 2	/20180719174943-referral-code	2018-07-15 21:57:22.891
 37	/20180722190810-alter-answer-pk	2018-07-22 12:30:14.769
 39	/20180722205152-phone-login	2018-07-22 14:54:02.788
+40	/20180824012520-reset-quiz	2018-08-23 18:44:35.521
 \.
 
 
 --
--- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: quizrunner; Owner: admin
+-- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: quizrunner; Owner: developer
 --
 
-SELECT pg_catalog.setval('quizrunner.migrations_id_seq', 39, true);
+SELECT pg_catalog.setval('quizrunner.migrations_id_seq', 40, true);
 
 
 --

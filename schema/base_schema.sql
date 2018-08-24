@@ -117,7 +117,8 @@ CREATE TABLE quizrunner.answer_submission (
     question_id uuid NOT NULL,
     user_id uuid NOT NULL,
     choice_id uuid NOT NULL,
-    submitted timestamp without time zone DEFAULT now() NOT NULL
+    submitted timestamp without time zone DEFAULT now() NOT NULL,
+    disabled boolean DEFAULT false NOT NULL
 );
 
 
