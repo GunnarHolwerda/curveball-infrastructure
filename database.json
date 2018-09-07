@@ -7,5 +7,13 @@
         "host": "localhost",
         "database": "curveball",
         "schema": "quizrunner"
+    },
+    "dev_qr": {
+        "driver": "pg",
+        "user": "developer",
+        "password": "ty?D9XtkcQ3*},md[=2i",
+        "host": "db.dev.curveball.tv",
+        "database": "curveball",
+        "schema": "quizrunner"
     }
 }

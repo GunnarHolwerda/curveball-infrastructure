@@ -3,7 +3,7 @@ Description=curveball-realtime the realtime server for curveball
 After=network.target
 
 [Service]
-Environment=REDIS_HOST=curveball-cluster.vsuptq.0001.usw2.cache.amazonaws.com
+Environment=REDIS_HOST=cache.dev.curveball.tv
 Environment=REDIS_PORT=6379
 Environment=NODE_ENV=production
 Environment=JWT_SECRET=sEcReT
