@@ -11,6 +11,7 @@ import { restore } from './src/commands/restore';
 import { up } from './src/commands/up';
 import { CurveballControlDir, InfrastructureDir, QuizDir, RealtimeDir } from './src/constants';
 import { reload } from './src/commands/reload';
+import { stream } from './src/commands/stream';
 
 const projectDirs = [InfrastructureDir, RealtimeDir, QuizDir, CurveballControlDir];
 const dirChecks = projectDirs.map(d => fs.exists(d));
@@ -24,6 +25,7 @@ program.command('build-images').alias('bi').action(buildImages);
 program.command('migrate').action(migrate);
 program.command('up').alias('u').action(up);
 program.command('reload').alias('r').action(reload);
+program.command('stream').action(stream);
 
 // tslint:disable-next-line
 (async () => {

@@ -28,11 +28,6 @@ services:
     restart: always
     ports: 
       - "6379:6379"
-  curveball-stream:
-    image: ossrs/srs:2.0.255
-    restart: always
-    ports:
-      - "3002:1935"
   curveball-realtime:
     image: curveball/realtime
     restart: always
