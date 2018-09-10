@@ -1,7 +1,7 @@
 #!/bin/sh
 
 KEY_FILE="~/Programming/curveball/dev-files/CurveballKey.pem"
-INSTANCE_IP="52.40.33.78"
+INSTANCE_IP="54.245.159.135"
 
 ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'bash -s' < ./realtime-setup.sh
 scp -i $KEY_FILE -r ./curveball-realtime.service ec2-user@$INSTANCE_IP:/home/ec2-user
