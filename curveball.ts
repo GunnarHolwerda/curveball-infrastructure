@@ -13,6 +13,7 @@ import { CurveballControlDir, InfrastructureDir, QuizDir, RealtimeDir } from './
 import { reload } from './src/commands/reload';
 import { stream } from './src/commands/stream';
 import { code } from './src/commands/code';
+import { dynamo } from './src/commands/dynamo';
 
 const projectDirs = [InfrastructureDir, RealtimeDir, QuizDir, CurveballControlDir];
 const dirChecks = projectDirs.map(d => fs.exists(d));
@@ -28,6 +29,7 @@ program.command('up').alias('u').action(up);
 program.command('reload').alias('r').action(reload);
 program.command('stream').action(stream);
 program.command('code').action(code);
+program.command('dynamo').action(dynamo);
 
 // tslint:disable-next-line
 (async () => {

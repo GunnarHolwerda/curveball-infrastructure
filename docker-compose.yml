@@ -14,6 +14,14 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: example
+  curveball-dynamo:
+    image: dwmkerr/dynamodb
+    command: -dbPath /data
+    restart: always
+    ports: 
+      - "3003:8000"
+    volumes:
+      - ./data:/data
   curveball-quiz:
     image: curveball/quiz
     restart: always

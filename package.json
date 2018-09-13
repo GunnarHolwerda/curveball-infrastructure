@@ -23,6 +23,7 @@
   "dependencies": {
     "@types/dockerode": "^2.5.4",
     "@types/node": "^10.3.3",
+    "aws-sdk": "^2.314.0",
     "commander": "^2.15.1",
     "db-migrate": "^0.11.1",
     "db-migrate-pg": "^0.4.0",
@@ -35,6 +36,7 @@
     "typescript": "^2.9.2"
   },
   "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
     "@types/moment": "^2.13.0",
     "@types/mz": "0.0.32",
     "@types/signale": "^1.2.0",
