@@ -29,7 +29,7 @@ program.command('up').alias('u').action(up);
 program.command('reload').alias('r').action(reload);
 program.command('stream').action(stream);
 program.command('code').action(code);
-program.command('dynamo').action(dynamo);
+program.command('dynamo [action]').action(dynamo);
 
 // tslint:disable-next-line
 (async () => {
