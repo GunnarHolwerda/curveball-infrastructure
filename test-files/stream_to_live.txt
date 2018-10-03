@@ -1,0 +1,4 @@
+1. Install Homebrew (https://brew.sh/)
+2. Install ffmpeg "brew install ffmpeg"
+Make sure to run this from the correct directory, or at least update the path to local_file.txt when you run the command
+3. Start streaming "ffmpeg -re -f concat -safe 0 -i infrastructure/test-files/local_file.txt -c copy -f flv rtmp://live.dev.curveball.tv/app/live"
