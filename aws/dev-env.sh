@@ -54,3 +54,5 @@ aws elbv2 create-listener  \
 --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:us-west-2:344946851001:targetgroup/curveball-dev-realtime-instances/a5ceb867a5c389c7
 
 # TODO: Create listener to return 503 if no healthy instances 
+
+./dns.sh
