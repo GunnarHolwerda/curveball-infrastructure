@@ -2,19 +2,13 @@ import { DynamoDB } from 'aws-sdk';
 import * as signale from 'signale';
 
 export async function dynamo(action: string = 'create') {
-    if (action !== 'create') {
-        signale.error('Other actions are not supported yet');
-        return;
-    }
     const tableAction = `${action}Table` || 'createTable';
     const db = new DynamoDB({ endpoint: 'http://localhost:3003', region: 'us-west-2', accessKeyId: 'local', secretAccessKey: 'local' });
+    const defaultThroughput = { ReadCapacityUnits: 5, WriteCapacityUnits: 5 };
     const params: DynamoDB.CreateTableInput[] = [
         {
             TableName: 'User',
-            ProvisionedThroughput: {
-                ReadCapacityUnits: 5,
-                WriteCapacityUnits: 5
-            },
+            ProvisionedThroughput: defaultThroughput,
             AttributeDefinitions: [
                 { AttributeName: 'user_id', AttributeType: 'S' },
                 { AttributeName: 'username', AttributeType: 'S' },
@@ -28,10 +22,7 @@ export async function dynamo(action: string = 'create') {
                         { AttributeName: 'phone', KeyType: 'HASH' }
                     ],
                     Projection: { ProjectionType: 'ALL' },
-                    ProvisionedThroughput: {
-                        ReadCapacityUnits: 1,
-                        WriteCapacityUnits: 1
-                    },
+                    ProvisionedThroughput: defaultThroughput,
                 },
                 {
                     IndexName: 'usernameIndex',
@@ -39,34 +30,51 @@ export async function dynamo(action: string = 'create') {
                         { AttributeName: 'username', KeyType: 'HASH' }
                     ],
                     Projection: { ProjectionType: 'ALL' },
-                    ProvisionedThroughput: {
-                        ReadCapacityUnits: 1,
-                        WriteCapacityUnits: 1
-                    },
+                    ProvisionedThroughput: defaultThroughput,
                 }
             ]
         },
         {
             TableName: 'Quiz',
-            ProvisionedThroughput: {
-                ReadCapacityUnits: 5,
-                WriteCapacityUnits: 5
-            },
+            ProvisionedThroughput: defaultThroughput,
             AttributeDefinitions: [
                 { AttributeName: 'quiz_id', AttributeType: 'S' }
             ],
             KeySchema: [{ AttributeName: 'quiz_id', KeyType: 'HASH' }]
         },
         {
+            TableName: 'Question',
+            ProvisionedThroughput: defaultThroughput,
+            AttributeDefinitions: [
+                { AttributeName: 'quiz_id', AttributeType: 'S' },
+                { AttributeName: 'question_num', AttributeType: 'S' }
+            ],
+            KeySchema: [
+                { AttributeName: 'quiz_id', KeyType: 'HASH' },
+                { AttributeName: 'question_num', KeyType: 'RANGE' }
+            ]
+        },
+        {
             TableName: 'Answer',
-            ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 },
+            ProvisionedThroughput: defaultThroughput,
             AttributeDefinitions: [
                 { AttributeName: 'question_id', AttributeType: 'S' },
                 { AttributeName: 'user_id', AttributeType: 'S' },
+                { AttributeName: 'choice_id', AttributeType: 'S' },
             ],
             KeySchema: [
                 { AttributeName: 'question_id', KeyType: 'HASH' },
-                { AttributeName: 'user_id', KeyType: 'RANGE' }
+                { AttributeName: 'choice_id', KeyType: 'RANGE' }
+            ],
+            LocalSecondaryIndexes: [
+                {
+                    IndexName: 'UserIndex',
+                    KeySchema: [
+                        { AttributeName: 'question_id', KeyType: 'HASH' },
+                        { AttributeName: 'user_id', KeyType: 'RANGE' }
+                    ],
+                    Projection: { ProjectionType: 'ALL' }
+                },
             ]
         }
     ];
