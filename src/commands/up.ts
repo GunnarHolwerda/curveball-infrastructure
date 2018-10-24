@@ -1,11 +1,11 @@
 import { Command } from 'commander';
 import { exec } from 'mz/child_process';
 import * as signale from 'signale';
-import { sleep } from 'sleep';
+import * as sleep from 'system-sleep';
 import { DbContainerName } from '../constants';
 import { buildImages } from './build-images';
-import { migrate } from './migrate';
 import { cleanDb } from './clean-db';
+import { migrate } from './migrate';
 import { reload } from './reload';
 
 export async function up(command: Command) {
@@ -16,7 +16,7 @@ export async function up(command: Command) {
     }
     await reload();
     let successful = false;
-    const secondsToSleep = 2;
+    const msToSleep = 2 * 1000;
     let running = false;
 
     signale.await('Waiting for containers');
@@ -25,7 +25,7 @@ export async function up(command: Command) {
             await exec(`docker exec -t ${DbContainerName} pg_isready -U admin`);
             running = true;
         } catch (e) {
-            sleep(secondsToSleep);
+            sleep(msToSleep);
         }
     }
     if (!running) {
@@ -35,7 +35,7 @@ export async function up(command: Command) {
 
     signale.await('Detecting curveball database');
     try {
-        sleep(2);
+        sleep(msToSleep);
         const result = await exec(`docker exec -t ${DbContainerName} psql -U admin -lqt | cut -d \\| -f 1 | grep -w curveball`);
         if (result[0].toString().trim() !== 'curveball') {
             throw new Error('Unable to find curveball db');
@@ -58,7 +58,7 @@ export async function up(command: Command) {
             successful = true;
         } catch (e) {
             attempts++;
-            sleep(secondsToSleep);
+            sleep(msToSleep);
             continue;
         }
     }
