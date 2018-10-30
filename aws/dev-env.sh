@@ -3,7 +3,7 @@
 # Create realtime security group
 aws ec2 create-security-group --group-name curveball-realtime-sg --description "Curveball Realtime SG"
 # Create realtime instance
-aws ec2 run-instances --image-id ami-a9d09ed1 --count 1 --instance-type t2.micro --key-name CurveballKey --security-groups curveball-realtime-sg
+aws ec2 run-instances --image-id ami-a9d09ed1 --count 1 --instance-type t3.nano --key-name CurveballKey --security-groups curveball-realtime-sg
 # Authorize access to realtime instances with my IP
 aws ec2 authorize-security-group-ingress --group-name curveball-realtime-sg --protocol tcp --port 22 --cidr 73.96.78.57/32
 

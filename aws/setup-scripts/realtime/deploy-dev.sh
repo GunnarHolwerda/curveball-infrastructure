@@ -1,11 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
 KEY_FILE="~/Programming/curveball/dev-files/CurveballKey.pem"
-INSTANCE_IP="54.245.159.135"
+# Save current IFS
+SAVEIFS=$IFS
+# Change IFS to new line. 
+IFS=$'\n'
+INSTANCE_IPS=( `aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | select(.SecurityGroups[].GroupName | contains(\"curveball-realtime-sg\")) | .InstanceId'` )
+# Restore IFS
+IFS=$SAVEIFS
 
-ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'bash -s' < ./realtime-setup.sh
-scp -i $KEY_FILE -r ./curveball-realtime.service ec2-user@$INSTANCE_IP:/home/ec2-user
-ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "sudo cp ~/curveball-realtime.service /lib/systemd/system/curveball-realtime.service"
-ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "sudo systemctl daemon-reload"
-ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "sudo systemctl enable curveball-realtime"
-ssh -i $KEY_FILE ec2-user@$INSTANCE_IP "sudo systemctl restart curveball-realtime"
+for ip in "${INSTANCE_IPS[@]}"; do
+  echo $ip
+  # ssh -i $KEY_FILE ec2-user@$ip 'bash -s' < ./realtime-setup.sh
+  # scp -i $KEY_FILE -r ./curveball-realtime.service ec2-user@$ip:/home/ec2-user
+  # ssh -i $KEY_FILE ec2-user@$ip "sudo cp ~/curveball-realtime.service /lib/systemd/system/curveball-realtime.service"
+  # ssh -i $KEY_FILE ec2-user@$ip "sudo systemctl daemon-reload"
+  # ssh -i $KEY_FILE ec2-user@$ip "sudo systemctl enable curveball-realtime"
+  # ssh -i $KEY_FILE ec2-user@$ip "sudo systemctl restart curveball-realtime"
+done
