@@ -1,28 +1,6 @@
 version: '2'
 
 services:
-  curveball-db:
-    image: postgres:10.4
-    restart: always
-    ports: 
-      - "5432:5432"
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-      - ./backups:/var/log/pg_backups
-      - ./schema:/var/log/pg_schema
-      - './certs/:/etc/ssl/private/'
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: example
-  curveball-quiz:
-    image: curveball/quiz
-    restart: always
-    ports:
-      - "3000:3000"
-    volumes:
-      - '../quiz/src/:/usr/local/src/quiz/src'
-      - '../quiz/serverless.yml:/usr/local/src/quiz/serverless.yml'
-      - './certs/:/etc/ssl/private/'
   curveball-cache:
     image: redis:4.0
     restart: always
