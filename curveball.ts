@@ -10,12 +10,18 @@ import { reload } from './src/commands/reload';
 import { stream } from './src/commands/stream';
 import { code } from './src/commands/code';
 import { logs } from './src/commands/logs';
+import { cleanDb } from './src/commands/clean-db';
+import { migrate } from './src/commands/migrate';
+import { createBaseSchema } from './src/commands/create-base-schema';
 
 const projectDirs = [InfrastructureDir, RealtimeDir, QuizDir, CurveballControlDir];
 const dirChecks = projectDirs.map(d => fs.exists(d));
 
 program.command('backup').action(backup);
 program.command('ssl').action(encrypt);
+program.command('create-base-schema').option('--only-create', 'Only include creation commands in sql file').action(createBaseSchema);
+program.command('clean-db').action(cleanDb);
+program.command('migrate').action(migrate);
 program.command('build-images').alias('bi').action(buildImages);
 program.command('up').alias('u').action(up);
 program.command('reload').alias('r').action(reload);

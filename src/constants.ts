@@ -14,4 +14,4 @@ export const RealtimeContainerName = 'infrastructure_curveball-realtime_1';
 export const QuizContainerName = 'infrastructure_curveball-quiz_1';
 export const CacheContainerName = 'infrastructure_curveball-cache_1';
 
-export const DockerDirs = [RealtimeDir, CurveballControlDir];
+export const DockerDirs = [RealtimeDir, CurveballControlDir, 'db-container'];
