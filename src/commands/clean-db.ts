@@ -5,6 +5,7 @@ export async function cleanDb(): Promise<void> {
     signale.pending('Moving database to clean state');
     const baseSchemaFile = '/var/log/pg_schema/base-schema.sql';
     try {
+        await exec(`docker exec -t ${DbContainerName} psql -U root curveball -c "DROP SCHEMA IF EXISTS quizrunner CASCADE;"`);
         await exec(`docker exec -t ${DbContainerName} psql -U root curveball -f ${baseSchemaFile}`);
         signale.success('Cleaned Database');
     } catch (e) {
