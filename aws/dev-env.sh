@@ -59,3 +59,6 @@ aws elbv2 create-listener  \
 # TODO: Create listener to return 503 if no healthy instances 
 
 ./dns.sh
+# Create iam instance profile to attach to realtime instances
+aws iam create-instance-profile --instance-profile-name RealtimeInstance-Instance-Profile
+aws iam add-role-to-instance-profile --role-name RealtimeInstance --instance-profile-name RealtimeInstance-Instance-Profile
