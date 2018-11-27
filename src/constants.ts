@@ -9,9 +9,8 @@ export const BackUpDir = `${InfrastructureDir}/backups`;
 export const SchemaDir = `${InfrastructureDir}/schema`;
 export const CertsDir = `${InfrastructureDir}/certs`;
 
-export const DbContainerName = 'infrastructure_curveball-db_1';
-export const RealtimeContainerName = 'infrastructure_curveball-realtime_1';
-export const QuizContainerName = 'infrastructure_curveball-quiz_1';
-export const CacheContainerName = 'infrastructure_curveball-cache_1';
+export const DbContainerName = 'curveball-db';
+export const RealtimeContainerName = 'curveball-realtime';
+export const CacheContainerName = 'curveball-cache';
 
-export const DockerDirs = [RealtimeDir, CurveballControlDir, 'db-container'];
+export const DockerDirs = [RealtimeDir, CurveballControlDir];

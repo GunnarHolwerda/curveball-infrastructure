@@ -34,9 +34,7 @@ export async function up(command: Command) {
     signale.await('Detecting curveball database');
     try {
         sleep(msToSleep);
-        await exec(
-            `docker exec -t infrastructure_curveball-db_1 psql -U root curveball -c "SELECT * FROM quizrunner.quizzes"
-        `);
+        await exec(`docker exec -t curveball-db psql -U root curveball -c "SELECT * FROM quizrunner.quizzes LIMIT 1"`);
     } catch (e) {
         signale.warn('Could not find the curveball database, creating clean database');
         try {

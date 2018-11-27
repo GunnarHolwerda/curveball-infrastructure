@@ -2,11 +2,13 @@ version: '2'
 
 services:
   curveball-cache:
+    container_name: curveball-cache
     image: redis:4.0
     restart: always
     ports: 
       - "6379:6379"
   curveball-db:
+    container_name: curveball-db
     image: postgres:10.4
     restart: always
     ports:
@@ -19,6 +21,7 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
   curveball-realtime:
+    container_name: curveball-realtime
     build: ../realtime
     image: curveball/realtime
     restart: always
@@ -29,6 +32,7 @@ services:
       - '../realtime/index.ts:/usr/local/src/realtime/index.ts'
       - './certs/:/etc/ssl/private/'
   curveball-control:
+    container_name: curveball-control
     build: ../curveball-control
     image: curveball/control
     restart: always
