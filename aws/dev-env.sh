@@ -12,10 +12,10 @@ aws ec2 authorize-security-group-ingress --group-name curveball-realtime-sg --pr
 
 ### RDS
 # Create RDS Security group
-# aws ec2 create-security-group --group-name curveball-db-sg --description "Security group for the curveball database"
-# aws ec2 authorize-security-group-ingress --group-name curveball-db-sg --protocol tcp --port 5432 --cidr 73.96.78.57/32
+aws ec2 create-security-group --group-name curveball-db-sg --description "Security group for the curveball database"
+aws ec2 authorize-security-group-ingress --group-name curveball-db-sg --protocol tcp --port 5432 --cidr 73.96.78.57/32
 # Create RDS Instance
-# aws rds create-db-instance --db-security-groups curveball-db-sg --engine postgres --master-username developer --master-user-password "ty?D9XtkcQ3*},md[=2i" --engine-version "10.4" --db-instance-identifier curveball-db --db-instance-class db.t2.micro --allocated-storage 5
+aws rds create-db-instance --db-security-groups curveball-db-sg --engine postgres --master-username root --master-user-password "ty?D9XtkcQ3*},md[=2i" --engine-version "10.4" --db-instance-identifier curveball-db --db-instance-class db.t2.micro --allocated-storage 5
 
 ### Elasticache
 # Create Cache Security group

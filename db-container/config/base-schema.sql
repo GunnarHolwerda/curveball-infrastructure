@@ -59,12 +59,12 @@ SET row_security = off;
   --	
 -- Name: lives; Type: TABLE; Schema: quizrunner; Owner: root	
 --	
- CREATE TABLE quizrunner.lives (	
+ CREATE TABLE quizrunner.powerup (	
     id SERIAL NOT NULL,	
     user_id uuid,	
     question uuid	
 );	
- ALTER TABLE quizrunner.lives OWNER TO root;	
+ ALTER TABLE quizrunner.powerup OWNER TO root;	
 
  --	
 -- Name: answer_submission; Type: TABLE; Schema: quizrunner; Owner: root	
@@ -173,7 +173,7 @@ SET row_security = off;
  --	
 -- Name: lives id; Type: DEFAULT; Schema: quizrunner; Owner: root	
 --	
- ALTER TABLE ONLY quizrunner.lives ALTER COLUMN id SET DEFAULT nextval('quizrunner.lives_id_seq'::regclass);	
+ ALTER TABLE ONLY quizrunner.powerup ALTER COLUMN id SET DEFAULT nextval('quizrunner.powerup_id_seq'::regclass);	
  --	
 -- Name: migrations id; Type: DEFAULT; Schema: quizrunner; Owner: root	
 --	
@@ -186,7 +186,7 @@ SET row_security = off;
  --	
 -- Name: lives lives_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: root	
 --	
- ALTER TABLE ONLY quizrunner.lives	
+ ALTER TABLE ONLY quizrunner.powerup	
     ADD CONSTRAINT lives_pkey PRIMARY KEY (id);	
  --	
 -- Name: migrations migrations_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: root	
@@ -290,12 +290,12 @@ SET row_security = off;
  --	
 -- Name: lives lives_question_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root	
 --	
- ALTER TABLE ONLY quizrunner.lives	
+ ALTER TABLE ONLY quizrunner.powerup	
     ADD CONSTRAINT lives_question_fk FOREIGN KEY (question) REFERENCES quizrunner.questions(question_id) ON UPDATE CASCADE ON DELETE RESTRICT;	
  --	
 -- Name: lives lives_users_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root	
 --	
- ALTER TABLE ONLY quizrunner.lives	
+ ALTER TABLE ONLY quizrunner.powerup	
     ADD CONSTRAINT lives_users_fk FOREIGN KEY (user_id) REFERENCES quizrunner.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;	
  --	
 -- Name: questions_choices questions_choices_question_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root	
