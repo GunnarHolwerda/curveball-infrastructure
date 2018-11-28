@@ -21,6 +21,9 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
   curveball-realtime:
+    depends_on:
+      - curveball-cache
+      - curveball-db
     container_name: curveball-realtime
     build: ../realtime
     image: curveball/realtime
@@ -32,6 +35,8 @@ services:
       - '../realtime/index.ts:/usr/local/src/realtime/index.ts'
       - './certs/:/etc/ssl/private/'
   curveball-control:
+    depends_on:
+      - curveball-realtime
     container_name: curveball-control
     build: ../curveball-control
     image: curveball/control

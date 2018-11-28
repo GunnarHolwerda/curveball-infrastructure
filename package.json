@@ -24,6 +24,7 @@
     "@types/dockerode": "^2.5.4",
     "@types/node": "^10.3.3",
     "@types/tail": "^1.2.0",
+    "axios": "^0.18.0",
     "commander": "^2.15.1",
     "db-migrate": "^0.11.1",
     "db-migrate-pg": "^0.4.0",
@@ -38,6 +39,7 @@
     "typescript": "^2.9.2"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/moment": "^2.13.0",
     "@types/mz": "0.0.32",
     "@types/signale": "^1.2.0",
