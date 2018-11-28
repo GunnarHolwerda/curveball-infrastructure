@@ -1,7 +1,7 @@
 import * as signale from 'signale';
 import * as sleep from 'system-sleep';
 import axios from 'axios';
-// import { buildImages } from './build-images';
+import { buildImages } from './build-images';
 import { reload } from './reload';
 import { exec } from 'mz/child_process';
 import { DbContainerName } from '../constants';
@@ -10,11 +10,11 @@ import { migrate } from './migrate';
 import { Command } from 'commander';
 
 export async function up(command: Command) {
-    // try {
-    //     await buildImages();
-    // } catch (e) {
-    //     return;
-    // }
+    try {
+        await buildImages();
+    } catch (e) {
+        return;
+    }
     await reload();
     let successful = false;
     const msToSleep = 2 * 1000;
