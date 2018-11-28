@@ -61,6 +61,8 @@ export async function up(command: Command) {
     }
     signale.info('Creating dummy user');
     const result = await axios.post('http://localhost:3001/dev/users', { phone: '+10000000000' });
-    await axios.post(`http://localhost:3001/dev/users/${result.data.userId}/verify`, { code: '0000000', username: 'DevAdmin' });
+    await axios.post(`http://localhost:3001/dev/users/${result.data.userId}/verify`, {
+        code: '0000000', username: 'DevAdmin', name: 'Dev Admin'
+    });
     signale.success('Environment is running in background');
 }
