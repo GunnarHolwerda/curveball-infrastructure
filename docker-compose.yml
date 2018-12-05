@@ -30,6 +30,7 @@ services:
     restart: always
     ports:
       - "3001:3001"
+      - "9229:9229"
     volumes:
       - '../realtime/src/:/usr/local/src/realtime/src'
       - '../realtime/index.ts:/usr/local/src/realtime/index.ts'
