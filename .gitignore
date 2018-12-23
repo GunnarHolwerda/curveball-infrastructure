@@ -68,3 +68,5 @@ certs/*.*
 *.srl
 .DS_STORE
 dist/
+
+db-configs/prod.json
