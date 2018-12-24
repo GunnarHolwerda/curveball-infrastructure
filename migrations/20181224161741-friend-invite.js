@@ -15,32 +15,24 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = async function (db) {
-  await db.createTable('friends', {
+  await db.createTable('friend_invites', {
     id: { type: 'int', primaryKey: true, autoIncrement: true },
     created: { type: 'datetime', defaultValue: new String('CURRENT_TIMESTAMP') },
     deleted: { type: 'boolean', defaultValue: false },
-    account_user_id: { type: 'uuid' },
-    friend_user_id: {
-      type: 'uuid',
-      foreignKey: {
-        name: 'friends_friend_user_id_fk',
-        table: 'users',
-        rules: {
-          onDelete: 'CASCADE',
-          onUpdate: 'RESTRICT'
-        },
-        mapping: 'user_id'
-      }
-    }
+    accepted: { type: 'boolean', defaultValue: false },
+    inviter_user_id: { type: 'uuid' },
+    invite_phone: { type: 'string' }
   });
-  await db.addIndex('friends', 'friends_account_user_id_idx', 'account_user_id');
+  await db.addIndex('friend_invites', 'friend_invites_inviter_user_id_idx', 'inviter_user_id');
+  await db.addIndex('friend_invites', 'friend_invites_invite_phone_idx', 'invite_phone');
 };
 
 exports.down = async function (db) {
-  await db.removeIndex('friends', 'friends_account_user_id_idx');
-  await db.dropTable('friends')
+  await db.removeIndex('friend_invites', 'friend_invites_inviter_user_id_idx');
+  await db.removeIndex('friend_invites', 'friend_invites_invite_phone_idx');
+  await db.dropTable('friend_invites');
 };
 
 exports._meta = {
-  "version": 2
+  "version": 3
 };
