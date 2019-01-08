@@ -46,6 +46,7 @@ services:
       - "4200:4200"
     volumes:
       - '../curveball-control/src/:/usr/local/src/curveball-control/src/'
+      - '../curveball-control/game-clock/:/usr/local/src/curveball-control/game-clock/'
       - '../curveball-control/assets/:/usr/local/src/curveball-control/assets/'
       - '../curveball-control/environments/:/usr/local/src/curveball-control/environments/'
 
