@@ -15,7 +15,7 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = async function (db) {
-  await db.renameColumn('questions', 'sport', 'topic');
+  await db.renameColumn('questions', 'sport', 'topic'); // May need to comment this out when migrating up
   await db.changeColumn('questions', 'topic', {
     type: 'int',
     notNull: true
@@ -73,7 +73,7 @@ exports.down = async function (db) {
   await db.dropTable('question_calculator');
   await db.dropTable('question_type');
   await db.changeColumn('questions', 'topic', { type: 'string', notNull: true });
-  await db.renameColumn('questions', 'topic', 'sport');
+  await db.renameColumn('questions', 'topic', 'sport'); // You may need to uncomment this if migrating down
 };
 
 exports._meta = {

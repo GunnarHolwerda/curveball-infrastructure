@@ -15,29 +15,14 @@ exports.setup = function (options, seedLink) {
 };
 
 const topics = [
-  { value: 'ncaaf', label: 'NCAAF', weight: 3 },
-  { value: 'ncaam', label: 'NCAAM', weight: 4 },
-  { value: 'ncaaw', label: 'NCAAW' },
-  { value: 'nfl', label: 'NFL', weight: 1 },
-  { value: 'nba', label: 'NBA', weight: 2 },
-  { value: 'mlb', label: 'MLB', weight: 5 },
-  { value: 'tennis', label: 'Tennis' },
-  { value: 'soccer', label: 'Soccer' },
-  { value: 'esports', label: 'Esports' },
-  { value: 'golf', label: 'Golf' },
-  { value: 'boxing', label: 'Boxing' },
-  { value: 'f1', label: 'F1' },
-  { value: 'olympics', label: 'Olympics' },
-  { value: 'nascar', label: 'NASCAR' },
-  { value: 'wnba', label: 'WNBA' },
-  { value: 'wwe', label: 'WWE' },
-  { value: 'ncaab', label: 'NCAA Baseball' },
-  { value: 'ncaasb', label: 'NCAA Softball' }
+  { value: 'any', label: 'Any' },
+  { value: 'nfl', label: 'NFL' },
+  { value: 'nba', label: 'NBA' },
 ]
 
 async function createTopics(db) {
   return db.runSql(`
-    INSERT INTO topic (label, machine_name) VALUES ${topics.map(t => `('${t.value}', '${t.label}')`).join(',')};
+    INSERT INTO topic (label, machine_name) VALUES ${topics.map(t => `('${t.label}', '${t.value}')`).join(',')};
   `);
 }
 
