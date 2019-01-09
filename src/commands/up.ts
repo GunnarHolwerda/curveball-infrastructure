@@ -1,5 +1,4 @@
 import * as signale from 'signale';
-import * as sleep from 'system-sleep';
 import axios from 'axios';
 import { buildImages } from './build-images';
 import { reload } from './reload';
@@ -37,7 +36,7 @@ export async function up(command: Command) {
 
     signale.await('Detecting curveball database');
     try {
-        sleep(2000);
+        await sleep(2);
         await exec(`docker exec -t curveball-db psql -U root curveball -c "SELECT * FROM quizrunner.quizzes LIMIT 1"`);
     } catch (e) {
         signale.warn('Could not find the curveball database, creating clean database');
@@ -63,7 +62,7 @@ export async function up(command: Command) {
         process.exit(1);
     }
     signale.info('Creating dummy user');
-    const realtimeStarted = await waitFor(5, async () => {
+    const realtimeStarted = await waitFor(15, async () => {
         return !!(await axios.get('http://localhost:3001/health-check')).data;
     }, 'Realtime service startup');
 
@@ -81,20 +80,25 @@ export async function up(command: Command) {
 async function waitFor(timeout: number, callback: () => Promise<boolean>, label: string): Promise<boolean> {
     const expirationTime = Date.now() + (timeout * 1000);
     let success = false;
-    let curTime = Date.now();
-    while (curTime < expirationTime) {
-        sleep(1000);
+    while (Date.now() < expirationTime) {
+        await sleep(1);
         try {
             success = await callback();
             if (success) {
+                signale.complete('success');
                 break;
             }
         } catch { }
-        curTime = Date.now();
     }
     if (!success) {
         signale.error(`Waiting for ${label} failed to spin up in time`);
         return false;
     }
     return true;
+}
+
+function sleep(seconds: number): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(resolve, seconds * 1000);
+    });
 }
