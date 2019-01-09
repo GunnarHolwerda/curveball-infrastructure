@@ -14,8 +14,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-      - ./db-container/config:/var/log/pg_schema
+      - ./data/postgres/:/var/lib/postgresql/data/
+      - ./db-container/config/:/var/log/pg_schema/
     environment:
       POSTGRES_DB: curveball
       POSTGRES_USER: root

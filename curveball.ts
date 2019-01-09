@@ -26,7 +26,11 @@ program.command('create-base-schema')
 program.command('clean-db').action(cleanDb).description('Drop tables and recreate db from base schema file');
 program.command('migrate').action(migrate).description('Migrates the database to the latest version');
 program.command('build-images').alias('bi').action(buildImages).description('Builds docker images for all services');
-program.command('up').alias('u').action(up).description('Recreates the local docker environment for curveball');
+program.command('up')
+    .option('--new', 'Refresh docker environment completely')
+    .alias('u')
+    .action(up)
+    .description('Recreates the local docker environment for curveball');
 program.command('reload').alias('r').action(reload).description('Stops and restarts docker compose');
 program.command('stream').action(stream).description('Starts a docker container to begin a stream that can be watched');
 program.command('code').action(code).description('The token to log in as an internal user');

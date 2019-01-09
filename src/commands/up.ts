@@ -8,9 +8,13 @@ import { DbContainerName } from '../constants';
 import { cleanDb } from './clean-db';
 import { migrate } from './migrate';
 import { Command } from 'commander';
+import { removeOldImages } from './remove-old-images';
 
 export async function up(command: Command) {
     try {
+        if (command.opts()['new']) {
+            await removeOldImages();
+        }
         await buildImages();
     } catch (e) {
         return;
@@ -44,13 +48,18 @@ export async function up(command: Command) {
         }
     }
 
+    const migrationErrors: Array<any> = [];
     const migrationFinished = await waitFor(60, async () => {
         try {
             await migrate(command);
             return true;
-        } catch { return false; }
+        } catch (e) {
+            migrationErrors.push(e);
+            return false;
+        }
     }, 'Database migration');
     if (!migrationFinished) {
+        console.log(migrationErrors);
         process.exit(1);
     }
     signale.info('Creating dummy user');

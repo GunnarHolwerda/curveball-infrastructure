@@ -3,7 +3,7 @@ import { fs } from 'mz';
 import { exec } from 'mz/child_process';
 import * as signale from 'signale';
 import { DbContainerName } from '../constants';
-const BaseSchemaFile = 'db-container/config/base_schema.sql';
+const BaseSchemaFile = 'db-container/config/new_base_schema.sql';
 const BaseDockerDbCommand = `docker exec -t ${DbContainerName}`;
 export async function createBaseSchema(command: Command) {
     try {
