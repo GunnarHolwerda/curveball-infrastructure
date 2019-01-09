@@ -14,7 +14,40 @@ exports.setup = function (options, seedLink) {
   seed = seedLink;
 };
 
+const topics = [
+  { value: 'ncaaf', label: 'NCAAF', weight: 3 },
+  { value: 'ncaam', label: 'NCAAM', weight: 4 },
+  { value: 'ncaaw', label: 'NCAAW' },
+  { value: 'nfl', label: 'NFL', weight: 1 },
+  { value: 'nba', label: 'NBA', weight: 2 },
+  { value: 'mlb', label: 'MLB', weight: 5 },
+  { value: 'tennis', label: 'Tennis' },
+  { value: 'soccer', label: 'Soccer' },
+  { value: 'esports', label: 'Esports' },
+  { value: 'golf', label: 'Golf' },
+  { value: 'boxing', label: 'Boxing' },
+  { value: 'f1', label: 'F1' },
+  { value: 'olympics', label: 'Olympics' },
+  { value: 'nascar', label: 'NASCAR' },
+  { value: 'wnba', label: 'WNBA' },
+  { value: 'wwe', label: 'WWE' },
+  { value: 'ncaab', label: 'NCAA Baseball' },
+  { value: 'ncaasb', label: 'NCAA Softball' }
+]
+
+async function createTopics(db) {
+  return db.runSql(`
+    INSERT INTO topic (label, machine_name) VALUES ${topics.map(t => `('${t.value}', '${t.label}')`).join(',')};
+  `);
+}
+
 exports.up = async function (db) {
+  await db.createTable('topic', {
+    topic_id: { type: 'int', primaryKey: true, autoIncrement: true },
+    label: { type: 'string', notNull: true },
+    machine_name: { type: 'string', notNull: true }
+  });
+  await createTopics(db);
   await db.createTable('subject', {
     subject_id: { type: 'int', primaryKey: true, autoIncrement: true },
     subject_type: { type: 'string', notNull: true }
@@ -44,12 +77,23 @@ exports.up = async function (db) {
   });
   await db.createTable('sport_season', {
     id: { type: 'string', primaryKey: true, unique: true },
-    sport: { type: 'string', primaryKey: true },
+    topic: {
+      type: 'int', foreignKey: {
+        name: 'sport_season_topic_fk',
+        table: 'topic',
+        rules: {
+          onDelete: 'RESTRICT',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'topic_id'
+      }
+    },
     created: { type: 'datetime', defaultValue: new String('CURRENT_TIMESTAMP') },
     updated: { type: 'datetime', defaultValue: new String('CURRENT_TIMESTAMP') },
     deleted: { type: 'boolean', defaultValue: false },
     json: { type: 'json', notNull: true }
   });
+  await db.addIndex('sport_season', 'sport_season_topic_idx', ['topic']);
   await db.createTable('sport_team', {
     reference_id: {
       notNull: true,
@@ -65,7 +109,17 @@ exports.up = async function (db) {
       }
     },
     id: { type: 'string', primaryKey: true, unique: true },
-    sport: { type: 'string', primaryKey: true },
+    topic: {
+      type: 'int', foreignKey: {
+        name: 'sport_season_topic_fk',
+        table: 'topic',
+        rules: {
+          onDelete: 'RESTRICT',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'topic_id'
+      }
+    },
     season: {
       notNull: true,
       type: 'string',
@@ -84,6 +138,7 @@ exports.up = async function (db) {
     deleted: { type: 'boolean', defaultValue: false },
     json: { type: 'json', notNull: true }
   });
+  await db.addIndex('sport_team', 'sport_team_topic_idx', ['topic']);
   await db.createTable('sport_player', {
     reference_id: {
       notNull: true,
@@ -99,7 +154,17 @@ exports.up = async function (db) {
       }
     },
     id: { type: 'string', primaryKey: true, unique: true },
-    sport: { type: 'string', primaryKey: true },
+    topic: {
+      type: 'int', foreignKey: {
+        name: 'sport_season_topic_fk',
+        table: 'topic',
+        rules: {
+          onDelete: 'RESTRICT',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'topic_id'
+      }
+    },
     team: {
       type: 'string',
       foreignKey: {
@@ -117,6 +182,7 @@ exports.up = async function (db) {
     deleted: { type: 'boolean', defaultValue: false },
     json: { type: 'json', notNull: true }
   });
+  await db.addIndex('sport_player', 'sport_player_topic_idx', ['topic']);
   await db.createTable('sport_game', {
     reference_id: {
       notNull: true,
@@ -132,7 +198,17 @@ exports.up = async function (db) {
       }
     },
     id: { type: 'string', primaryKey: true, unique: true },
-    sport: { type: 'string', primaryKey: true },
+    topic: {
+      type: 'int', foreignKey: {
+        name: 'sport_season_topic_fk',
+        table: 'topic',
+        rules: {
+          onDelete: 'RESTRICT',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'topic_id'
+      }
+    },
     season: {
       type: 'string',
       notNull: true,
@@ -151,16 +227,22 @@ exports.up = async function (db) {
     deleted: { type: 'boolean', defaultValue: false },
     json: { type: 'json', notNull: true }
   });
+  await db.addIndex('sport_game', 'sport_game_topic_idx', ['topic']);
 };
 
 exports.down = async function (db) {
+  await db.removeIndex('sport_game_topic_idx');
   await db.dropTable('sport_game');
+  await db.removeIndex('sport_player_topic_idx');
   await db.dropTable('sport_player');
+  await db.removeIndex('sport_team_topic_idx');
   await db.dropTable('sport_team');
+  await db.removeIndex('sport_season_topic_idx');
   await db.dropTable('sport_season');
   await db.removeColumn('questions_choices', 'subject_id');
   await db.removeColumn('questions', 'subject_id');
   await db.removeIndex('subject_type_idx');
+  await db.dropTable('topic');
   await db.dropTable('subject');
 };
 

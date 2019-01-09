@@ -14,12 +14,13 @@ export async function createBaseSchema(command: Command) {
     try {
         await Promise.all([
             exec(
-                `${BaseDockerDbCommand} pg_dump -U admin ${createString} --schema-only ` +
+                `${BaseDockerDbCommand} pg_dump -U root ${createString} --schema-only ` +
                 `-N "public" -N "pg_catalog" curveball > ${BaseSchemaFile.replace('.sql', `${createString}.sql`)}`
             )
         ]);
         signale.success('Complete.');
     } catch (e) {
+        signale.error('Error when creating new base schema file');
         signale.error(e);
     }
 }

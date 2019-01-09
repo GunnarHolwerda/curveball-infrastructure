@@ -33,7 +33,6 @@ services:
       - "9229:9229"
     volumes:
       - '../realtime/src/:/usr/local/src/realtime/src'
-      - '../realtime/index.ts:/usr/local/src/realtime/index.ts'
       - './certs/:/etc/ssl/private/'
   curveball-control:
     depends_on:
@@ -46,7 +45,6 @@ services:
       - "4200:4200"
     volumes:
       - '../curveball-control/src/:/usr/local/src/curveball-control/src/'
-      - '../curveball-control/game-clock/:/usr/local/src/curveball-control/game-clock/'
       - '../curveball-control/assets/:/usr/local/src/curveball-control/assets/'
       - '../curveball-control/environments/:/usr/local/src/curveball-control/environments/'
 
