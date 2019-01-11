@@ -97,7 +97,7 @@ async function waitFor(timeout: number, callback: () => Promise<boolean>, label:
     return true;
 }
 
-function sleep(seconds: number): Promise<void> {
+export function sleep(seconds: number): Promise<void> {
     return new Promise((resolve) => {
         setTimeout(resolve, seconds * 1000);
     });

@@ -1,7 +1,7 @@
 import { exec } from 'mz/child_process';
 import * as signale from 'signale';
-import * as sleep from 'system-sleep';
 import { InfrastructureDir } from '../constants';
+import { sleep } from './up';
 
 const ContainerName = 'curveball_stream';
 
@@ -31,7 +31,7 @@ export async function stream() {
     }
     signale.pending('Starting stream...');
     signale.success('A stream will start in 5 seconds at rtmp://localhost:3002/app/live. Cancel (CTRL+C) this command to stop it.');
-    sleep(5000);
+    await sleep(5000);
     // tslint:disable-next-line
     await exec(`docker exec ${ContainerName} /srs/objs/ffmpeg/bin/ffmpeg -re -f concat -i /srs/videos/looped_file.txt -c copy -f flv rtmp://localhost:1935/app/live`);
 }
