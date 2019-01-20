@@ -306,7 +306,9 @@ ALTER SEQUENCE quizrunner.question_calculator_calculator_id_seq OWNED BY quizrun
 CREATE TABLE quizrunner.question_type (
     id integer NOT NULL,
     title character varying NOT NULL,
-    description character varying NOT NULL
+    description character varying NOT NULL,
+    generic boolean DEFAULT false NOT NULL,
+    machine_name character varying DEFAULT quizrunner.random_string(10) NOT NULL
 );
 
 
@@ -364,7 +366,8 @@ CREATE TABLE quizrunner.questions_choices (
     question_id uuid NOT NULL,
     text character varying(64) NOT NULL,
     is_answer boolean DEFAULT false NOT NULL,
-    subject_id integer
+    subject_id integer,
+    score numeric
 );
 
 
@@ -405,14 +408,14 @@ ALTER TABLE quizrunner.referrals OWNER TO root;
 --
 
 CREATE TABLE quizrunner.sport_game (
-    reference_id integer NOT NULL,
-    id character varying NOT NULL,
-    topic integer,
-    season character varying NOT NULL,
+    subject_id integer NOT NULL,
+    external_id character varying NOT NULL,
+    parent_external_id character varying NOT NULL,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     deleted boolean DEFAULT false,
-    json json NOT NULL
+    json jsonb NOT NULL,
+    statistics json
 );
 
 
@@ -423,14 +426,13 @@ ALTER TABLE quizrunner.sport_game OWNER TO root;
 --
 
 CREATE TABLE quizrunner.sport_player (
-    reference_id integer NOT NULL,
-    id character varying NOT NULL,
-    topic integer,
-    team character varying,
+    subject_id integer NOT NULL,
+    external_id character varying NOT NULL,
+    parent_external_id character varying,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     deleted boolean DEFAULT false,
-    json json NOT NULL
+    json jsonb NOT NULL
 );
 
 
@@ -441,12 +443,12 @@ ALTER TABLE quizrunner.sport_player OWNER TO root;
 --
 
 CREATE TABLE quizrunner.sport_season (
-    id character varying NOT NULL,
-    topic integer,
+    external_id character varying NOT NULL,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     deleted boolean DEFAULT false,
-    json json NOT NULL
+    json jsonb NOT NULL,
+    subject_id integer NOT NULL
 );
 
 
@@ -457,14 +459,13 @@ ALTER TABLE quizrunner.sport_season OWNER TO root;
 --
 
 CREATE TABLE quizrunner.sport_team (
-    reference_id integer NOT NULL,
-    id character varying NOT NULL,
-    topic integer,
-    season character varying NOT NULL,
+    subject_id integer NOT NULL,
+    external_id character varying NOT NULL,
+    parent_external_id character varying NOT NULL,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     deleted boolean DEFAULT false,
-    json json NOT NULL
+    json jsonb NOT NULL
 );
 
 
@@ -476,7 +477,8 @@ ALTER TABLE quizrunner.sport_team OWNER TO root;
 
 CREATE TABLE quizrunner.subject (
     subject_id integer NOT NULL,
-    subject_type character varying NOT NULL
+    subject_type character varying NOT NULL,
+    topic integer NOT NULL
 );
 
 
@@ -682,6 +684,14 @@ ALTER TABLE ONLY quizrunner.question_calculator
 
 
 --
+-- Name: question_type question_type_machine_name_key; Type: CONSTRAINT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.question_type
+    ADD CONSTRAINT question_type_machine_name_key UNIQUE (machine_name);
+
+
+--
 -- Name: question_type question_type_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: root
 --
 
@@ -734,7 +744,7 @@ ALTER TABLE ONLY quizrunner.referrals
 --
 
 ALTER TABLE ONLY quizrunner.sport_game
-    ADD CONSTRAINT sport_game_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT sport_game_pkey PRIMARY KEY (external_id);
 
 
 --
@@ -742,7 +752,7 @@ ALTER TABLE ONLY quizrunner.sport_game
 --
 
 ALTER TABLE ONLY quizrunner.sport_player
-    ADD CONSTRAINT sport_player_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT sport_player_pkey PRIMARY KEY (external_id);
 
 
 --
@@ -750,7 +760,7 @@ ALTER TABLE ONLY quizrunner.sport_player
 --
 
 ALTER TABLE ONLY quizrunner.sport_season
-    ADD CONSTRAINT sport_season_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT sport_season_pkey PRIMARY KEY (external_id);
 
 
 --
@@ -758,7 +768,7 @@ ALTER TABLE ONLY quizrunner.sport_season
 --
 
 ALTER TABLE ONLY quizrunner.sport_team
-    ADD CONSTRAINT sport_team_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT sport_team_pkey PRIMARY KEY (external_id);
 
 
 --
@@ -838,6 +848,13 @@ CREATE INDEX answer_submissions_user_id_question_id_idx ON quizrunner.answer_sub
 
 
 --
+-- Name: choices_subject_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX choices_subject_idx ON quizrunner.questions_choices USING btree (subject_id);
+
+
+--
 -- Name: friend_invites_invite_phone_idx; Type: INDEX; Schema: quizrunner; Owner: root
 --
 
@@ -856,6 +873,13 @@ CREATE INDEX friend_invites_inviter_user_id_idx ON quizrunner.friend_invites USI
 --
 
 CREATE INDEX friends_account_user_id_idx ON quizrunner.friends USING btree (account_user_id);
+
+
+--
+-- Name: question_type_machine_name_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX question_type_machine_name_idx ON quizrunner.question_type USING btree (machine_name);
 
 
 --
@@ -880,31 +904,80 @@ CREATE INDEX quiz_fkey ON quizrunner.questions USING btree (quiz_id);
 
 
 --
--- Name: sport_game_topic_idx; Type: INDEX; Schema: quizrunner; Owner: root
+-- Name: sport_game_external_id_idx; Type: INDEX; Schema: quizrunner; Owner: root
 --
 
-CREATE INDEX sport_game_topic_idx ON quizrunner.sport_game USING btree (topic);
-
-
---
--- Name: sport_player_topic_idx; Type: INDEX; Schema: quizrunner; Owner: root
---
-
-CREATE INDEX sport_player_topic_idx ON quizrunner.sport_player USING btree (topic);
+CREATE INDEX sport_game_external_id_idx ON quizrunner.sport_game USING btree (external_id);
 
 
 --
--- Name: sport_season_topic_idx; Type: INDEX; Schema: quizrunner; Owner: root
+-- Name: sport_game_parent_external_id_idx; Type: INDEX; Schema: quizrunner; Owner: root
 --
 
-CREATE INDEX sport_season_topic_idx ON quizrunner.sport_season USING btree (topic);
+CREATE INDEX sport_game_parent_external_id_idx ON quizrunner.sport_game USING btree (parent_external_id);
 
 
 --
--- Name: sport_team_topic_idx; Type: INDEX; Schema: quizrunner; Owner: root
+-- Name: sport_game_subject_idx; Type: INDEX; Schema: quizrunner; Owner: root
 --
 
-CREATE INDEX sport_team_topic_idx ON quizrunner.sport_team USING btree (topic);
+CREATE INDEX sport_game_subject_idx ON quizrunner.sport_game USING btree (subject_id);
+
+
+--
+-- Name: sport_player_external_id_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX sport_player_external_id_idx ON quizrunner.sport_player USING btree (external_id);
+
+
+--
+-- Name: sport_player_parent_external_id_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX sport_player_parent_external_id_idx ON quizrunner.sport_player USING btree (parent_external_id);
+
+
+--
+-- Name: sport_player_subject_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX sport_player_subject_idx ON quizrunner.sport_player USING btree (subject_id);
+
+
+--
+-- Name: sport_season_external_id_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX sport_season_external_id_idx ON quizrunner.sport_season USING btree (external_id);
+
+
+--
+-- Name: sport_season_subject_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX sport_season_subject_idx ON quizrunner.sport_season USING btree (subject_id);
+
+
+--
+-- Name: sport_team_external_id_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX sport_team_external_id_idx ON quizrunner.sport_team USING btree (external_id);
+
+
+--
+-- Name: sport_team_parent_external_id_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX sport_team_parent_external_id_idx ON quizrunner.sport_team USING btree (parent_external_id);
+
+
+--
+-- Name: sport_team_subject_idx; Type: INDEX; Schema: quizrunner; Owner: root
+--
+
+CREATE INDEX sport_team_subject_idx ON quizrunner.sport_team USING btree (subject_id);
 
 
 --
@@ -1061,7 +1134,7 @@ ALTER TABLE ONLY quizrunner.referrals
 --
 
 ALTER TABLE ONLY quizrunner.sport_game
-    ADD CONSTRAINT sport_game_subject_id_fk FOREIGN KEY (reference_id) REFERENCES quizrunner.subject(subject_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT sport_game_subject_id_fk FOREIGN KEY (subject_id) REFERENCES quizrunner.subject(subject_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
@@ -1069,7 +1142,7 @@ ALTER TABLE ONLY quizrunner.sport_game
 --
 
 ALTER TABLE ONLY quizrunner.sport_player
-    ADD CONSTRAINT sport_player_subject_id_fk FOREIGN KEY (reference_id) REFERENCES quizrunner.subject(subject_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT sport_player_subject_id_fk FOREIGN KEY (subject_id) REFERENCES quizrunner.subject(subject_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
@@ -1077,39 +1150,15 @@ ALTER TABLE ONLY quizrunner.sport_player
 --
 
 ALTER TABLE ONLY quizrunner.sport_player
-    ADD CONSTRAINT sport_player_team_fk FOREIGN KEY (team) REFERENCES quizrunner.sport_team(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT sport_player_team_fk FOREIGN KEY (parent_external_id) REFERENCES quizrunner.sport_team(external_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
--- Name: sport_season sport_season_topic_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
+-- Name: sport_season sport_season_subject_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
 --
 
 ALTER TABLE ONLY quizrunner.sport_season
-    ADD CONSTRAINT sport_season_topic_fk FOREIGN KEY (topic) REFERENCES quizrunner.topic(topic_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: sport_team sport_season_topic_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
---
-
-ALTER TABLE ONLY quizrunner.sport_team
-    ADD CONSTRAINT sport_season_topic_fk FOREIGN KEY (topic) REFERENCES quizrunner.topic(topic_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: sport_player sport_season_topic_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
---
-
-ALTER TABLE ONLY quizrunner.sport_player
-    ADD CONSTRAINT sport_season_topic_fk FOREIGN KEY (topic) REFERENCES quizrunner.topic(topic_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: sport_game sport_season_topic_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
---
-
-ALTER TABLE ONLY quizrunner.sport_game
-    ADD CONSTRAINT sport_season_topic_fk FOREIGN KEY (topic) REFERENCES quizrunner.topic(topic_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT sport_season_subject_fk FOREIGN KEY (subject_id) REFERENCES quizrunner.subject(subject_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
@@ -1117,7 +1166,7 @@ ALTER TABLE ONLY quizrunner.sport_game
 --
 
 ALTER TABLE ONLY quizrunner.sport_team
-    ADD CONSTRAINT sport_team_season_fk FOREIGN KEY (season) REFERENCES quizrunner.sport_season(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT sport_team_season_fk FOREIGN KEY (parent_external_id) REFERENCES quizrunner.sport_season(external_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
@@ -1125,7 +1174,7 @@ ALTER TABLE ONLY quizrunner.sport_team
 --
 
 ALTER TABLE ONLY quizrunner.sport_game
-    ADD CONSTRAINT sport_team_season_fk FOREIGN KEY (season) REFERENCES quizrunner.sport_season(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT sport_team_season_fk FOREIGN KEY (parent_external_id) REFERENCES quizrunner.sport_season(external_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
@@ -1133,7 +1182,15 @@ ALTER TABLE ONLY quizrunner.sport_game
 --
 
 ALTER TABLE ONLY quizrunner.sport_team
-    ADD CONSTRAINT sport_team_subject_id_fk FOREIGN KEY (reference_id) REFERENCES quizrunner.subject(subject_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT sport_team_subject_id_fk FOREIGN KEY (subject_id) REFERENCES quizrunner.subject(subject_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: subject subject_topic_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.subject
+    ADD CONSTRAINT subject_topic_fk FOREIGN KEY (topic) REFERENCES quizrunner.topic(topic_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
