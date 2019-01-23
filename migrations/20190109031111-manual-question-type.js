@@ -16,10 +16,12 @@ exports.setup = function (options, seedLink) {
 
 exports.up = async function (db) {
   await db.runSql(
-    `INSERT INTO question_type (title, description) VALUES (?, ?);`,
+    `INSERT INTO question_type (title, description, generic, machine_name) VALUES (?, ?, ?);`,
     [
       'Manual',
-      'A question with manual point calculation. You will need to select which answers are correct on your own'
+      'A question with manual point calculation. You will need to select which answers are correct on your own',
+      true,
+      'manual'
     ]
   );
 };
