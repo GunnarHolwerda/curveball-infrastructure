@@ -32,6 +32,8 @@ export async function stream() {
     signale.pending('Starting stream...');
     signale.success('A stream will start in 5 seconds at rtmp://localhost:3002/app/live. Cancel (CTRL+C) this command to stop it.');
     await sleep(5000);
+
+    // To stream from local computer ffmpeg -re -i ~/Downloads/test_barstool_show.mp4 -c copy -f flv rtmp://live.dev.curveball.tv/app/live
     // tslint:disable-next-line
     await exec(`docker exec ${ContainerName} /srs/objs/ffmpeg/bin/ffmpeg -re -f concat -i /srs/videos/looped_file.txt -c copy -f flv rtmp://localhost:1935/app/live`);
 }

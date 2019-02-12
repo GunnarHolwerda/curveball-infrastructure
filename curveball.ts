@@ -25,9 +25,14 @@ program.command('create-base-schema')
     .description('Creates base schema file for the current database');
 program.command('clean-db').action(cleanDb).description('Drop tables and recreate db from base schema file');
 program.command('migrate').action(migrate).description('Migrates the database to the latest version');
-program.command('build-images').alias('bi').action(buildImages).description('Builds docker images for all services');
+program.command('build-images')
+    .option('--force-remove', 'Force remove all old images before building new ones')
+    .alias('bi')
+    .action(buildImages)
+    .description('Builds docker images for all services');
 program.command('up')
     .option('--new', 'Refresh docker environment completely')
+    .option('--force-new', 'Removes all old container images laying around before building')
     .alias('u')
     .action(up)
     .description('Recreates the local docker environment for curveball');

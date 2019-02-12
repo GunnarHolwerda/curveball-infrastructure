@@ -14,7 +14,7 @@ export async function up(command: Command) {
         if (command.opts()['new']) {
             await removeOldImages();
         }
-        await buildImages();
+        await buildImages(command);
     } catch (e) {
         return;
     }
