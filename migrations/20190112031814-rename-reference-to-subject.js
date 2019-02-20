@@ -27,5 +27,5 @@ exports.down = async function (db) {
 };
 
 exports._meta = {
-  "version": 9
+  "version": 8
 };

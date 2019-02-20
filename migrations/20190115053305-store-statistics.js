@@ -15,7 +15,7 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = async function (db) {
-  await db.addColumn('sport_game', 'statistics', { type: 'json' });
+  await db.addColumn('sport_game', 'statistics', { type: 'jsonb' });
 };
 
 exports.down = async function (db) {
@@ -23,5 +23,5 @@ exports.down = async function (db) {
 };
 
 exports._meta = {
-  "version": 15
+  "version": 13
 };
