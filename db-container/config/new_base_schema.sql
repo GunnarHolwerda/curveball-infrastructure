@@ -306,9 +306,9 @@ ALTER SEQUENCE quizrunner.question_calculator_calculator_id_seq OWNED BY quizrun
 CREATE TABLE quizrunner.question_type (
     id integer NOT NULL,
     title character varying NOT NULL,
-    description character varying NOT NULL,
-    generic boolean DEFAULT false NOT NULL,
-    machine_name character varying DEFAULT quizrunner.random_string(10) NOT NULL
+    generic boolean NOT NULL,
+    machine_name character varying NOT NULL,
+    description character varying NOT NULL
 );
 
 
@@ -367,7 +367,8 @@ CREATE TABLE quizrunner.questions_choices (
     text character varying(64) NOT NULL,
     is_answer boolean DEFAULT false NOT NULL,
     subject_id integer,
-    score numeric
+    score numeric,
+    data json
 );
 
 
@@ -381,11 +382,12 @@ CREATE TABLE quizrunner.quizzes (
     quiz_id uuid DEFAULT quizrunner.uuid_generate_v4() NOT NULL,
     active boolean DEFAULT false NOT NULL,
     title text NOT NULL,
-    pot_amount bigint DEFAULT '0'::bigint NOT NULL,
-    completed boolean DEFAULT false NOT NULL,
+    pot_amount numeric,
     created timestamp without time zone DEFAULT now() NOT NULL,
     auth boolean DEFAULT false NOT NULL,
-    deleted boolean DEFAULT false NOT NULL
+    deleted boolean DEFAULT false NOT NULL,
+    completed_date timestamp without time zone,
+    closed boolean DEFAULT false
 );
 
 
@@ -566,7 +568,7 @@ ALTER TABLE quizrunner.users OWNER TO root;
 CREATE TABLE quizrunner.winners (
     quiz_id uuid NOT NULL,
     user_id uuid NOT NULL,
-    amount_won integer NOT NULL
+    amount_won numeric
 );
 
 
@@ -681,14 +683,6 @@ ALTER TABLE ONLY quizrunner.migrations
 
 ALTER TABLE ONLY quizrunner.question_calculator
     ADD CONSTRAINT question_calculator_pkey PRIMARY KEY (calculator_id);
-
-
---
--- Name: question_type question_type_machine_name_key; Type: CONSTRAINT; Schema: quizrunner; Owner: root
---
-
-ALTER TABLE ONLY quizrunner.question_type
-    ADD CONSTRAINT question_type_machine_name_key UNIQUE (machine_name);
 
 
 --
