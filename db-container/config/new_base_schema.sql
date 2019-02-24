@@ -82,6 +82,42 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: account; Type: TABLE; Schema: quizrunner; Owner: root
+--
+
+CREATE TABLE quizrunner.account (
+    id integer NOT NULL,
+    email character varying NOT NULL,
+    password character varying NOT NULL,
+    "networkName" character varying NOT NULL
+);
+
+
+ALTER TABLE quizrunner.account OWNER TO root;
+
+--
+-- Name: account_id_seq; Type: SEQUENCE; Schema: quizrunner; Owner: root
+--
+
+CREATE SEQUENCE quizrunner.account_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE quizrunner.account_id_seq OWNER TO root;
+
+--
+-- Name: account_id_seq; Type: SEQUENCE OWNED BY; Schema: quizrunner; Owner: root
+--
+
+ALTER SEQUENCE quizrunner.account_id_seq OWNED BY quizrunner.account.id;
+
+
+--
 -- Name: answer_submission; Type: TABLE; Schema: quizrunner; Owner: root
 --
 
@@ -387,7 +423,8 @@ CREATE TABLE quizrunner.quizzes (
     auth boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
     completed_date timestamp without time zone,
-    closed boolean DEFAULT false
+    closed boolean DEFAULT false,
+    account_id integer
 );
 
 
@@ -417,7 +454,7 @@ CREATE TABLE quizrunner.sport_game (
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     deleted boolean DEFAULT false,
     json jsonb NOT NULL,
-    statistics json
+    statistics jsonb
 );
 
 
@@ -575,6 +612,13 @@ CREATE TABLE quizrunner.winners (
 ALTER TABLE quizrunner.winners OWNER TO root;
 
 --
+-- Name: account id; Type: DEFAULT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.account ALTER COLUMN id SET DEFAULT nextval('quizrunner.account_id_seq'::regclass);
+
+
+--
 -- Name: answer_submission answer_id; Type: DEFAULT; Schema: quizrunner; Owner: root
 --
 
@@ -635,6 +679,14 @@ ALTER TABLE ONLY quizrunner.subject ALTER COLUMN subject_id SET DEFAULT nextval(
 --
 
 ALTER TABLE ONLY quizrunner.topic ALTER COLUMN topic_id SET DEFAULT nextval('quizrunner.topic_topic_id_seq'::regclass);
+
+
+--
+-- Name: account account_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.account
+    ADD CONSTRAINT account_pkey PRIMARY KEY (id);
 
 
 --
@@ -1097,6 +1149,14 @@ ALTER TABLE ONLY quizrunner.questions
 
 ALTER TABLE ONLY quizrunner.questions_choices
     ADD CONSTRAINT questions_choices_question_id_fkey FOREIGN KEY (question_id) REFERENCES quizrunner.questions(question_id);
+
+
+--
+-- Name: quizzes quiz_account_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.quizzes
+    ADD CONSTRAINT quiz_account_fk FOREIGN KEY (account_id) REFERENCES quizrunner.account(id) ON UPDATE RESTRICT ON DELETE CASCADE;
 
 
 --
