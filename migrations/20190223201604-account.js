@@ -15,19 +15,41 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = async function (db) {
+  await db.createTable('network', {
+    columns: {
+      id: { type: 'int', autoIncrement: true, primaryKey: true },
+      name: { type: 'string', notNull: true },
+      photo: { type: 'string' }
+    }
+  });
   await db.createTable('account', {
     columns: {
       id: { type: 'int', autoIncrement: true, primaryKey: true },
       email: { type: 'string', notNull: true },
       password: { type: 'string', notNull: true },
-      network_name: { type: 'string', notNull: true }
+      first_name: { type: 'string', notNull: true },
+      last_name: { type: 'string', notNull: true },
+      network_id: {
+        type: 'int',
+        notNull: true,
+        foreignKey: {
+          name: 'account_network_id_fk',
+          table: 'network',
+          notNull: true,
+          rules: {
+            onDelete: 'CASCADE',
+            onUpdate: 'RESTRICT'
+          },
+          mapping: 'id'
+        }
+      }
     }
   });
-  await db.addColumn('quizzes', 'account_id', {
+  await db.addColumn('quizzes', 'network_id', {
     type: 'int',
     foreignKey: {
       name: 'quiz_account_fk',
-      table: 'account',
+      table: 'network',
       notNull: true,
       rules: {
         onDelete: 'CASCADE',
@@ -39,8 +61,9 @@ exports.up = async function (db) {
 };
 
 exports.down = async function (db) {
-  await db.removeColumn('quizzes', 'account_id');
+  await db.removeColumn('quizzes', 'network_id');
   await db.dropTable('account');
+  await db.dropTable('network');
 };
 
 exports._meta = {
