@@ -1,8 +1,8 @@
 import * as path from 'path';
 
 export const InfrastructureDir = path.resolve('../infrastructure');
-export const RealtimeDir = path.resolve('..//realtime');
-export const QuizDir = path.resolve('../quiz');
+export const RealtimeDir = path.resolve('../realtime');
+export const QuizDir = RealtimeDir;
 export const CurveballControlDir = path.resolve('../curveball-control');
 
 export const BackUpDir = `${InfrastructureDir}/backups`;
