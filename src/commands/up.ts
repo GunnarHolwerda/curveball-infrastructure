@@ -102,16 +102,30 @@ export function sleep(seconds: number): Promise<void> {
 
 async function createMockAccounts(): Promise<void> {
     const result = await axios.post('http://localhost:3001/dev/users', { phone: '+10000000000' });
-    await axios.post(`http://localhost:3001/dev/users/${result.data.userId}/verify`, {
+    const userVerifyResult = await axios.post(`http://localhost:3001/dev/users/${result.data.userId}/verify`, {
         code: '0000000', username: 'DevAdmin', name: 'Dev Admin'
     });
+    let accountLoginResult;
     try {
-        await axios.post('http://localhost:3001/dev/accounts', {
+        accountLoginResult = await axios.post('http://localhost:3001/dev/accounts', {
             email: 'test@test.com',
             password: 'password',
-            networkName: 'Curveball'
+            firstName: 'Curveball',
+            lastName: 'Admin',
+            network: {
+                name: 'Curveball'
+            }
         });
     } catch (e) {
         signale.info('Curveball account already exists');
+        accountLoginResult = await axios.post('http://localhost:3001/dev/accounts:login', {
+            email: 'test@test.com',
+            password: 'password'
+        });
+    } finally {
+        await axios.post('http://localhost:3001/dev/accounts:link', {
+            accountToken: accountLoginResult.data.token,
+            userToken: userVerifyResult.data.token
+        }, { headers: { 'Authorization': `Bearer ${accountLoginResult.data.token}` } });
     }
 }
