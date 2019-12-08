@@ -11,6 +11,7 @@ export async function buildImages(command: Command): Promise<void> {
         await exec('docker-compose build');
     } catch (e) {
         signale.error('Something failed, make sure docker is running');
+        signale.error(e.message);
         throw e;
     }
     signale.timeEnd('Building docker images');
