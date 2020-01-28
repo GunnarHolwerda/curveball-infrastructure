@@ -3,13 +3,13 @@ version: '2'
 services:
   curveball-cache:
     container_name: curveball-cache
-    image: redis:4.0
+    image: redis:5
     restart: always
     ports: 
       - "6379:6379"
   curveball-db:
     container_name: curveball-db
-    image: postgres:10.4
+    image: postgres:12
     restart: always
     ports:
       - "5432:5432"

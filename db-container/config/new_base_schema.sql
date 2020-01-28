@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.4 (Debian 10.4-2.pgdg90+1)
--- Dumped by pg_dump version 10.4 (Debian 10.4-2.pgdg90+1)
+-- Dumped from database version 12.1 (Debian 12.1-1.pgdg100+1)
+-- Dumped by pg_dump version 12.1 (Debian 12.1-1.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -12,6 +12,7 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
@@ -25,21 +26,7 @@ CREATE SCHEMA quizrunner;
 ALTER SCHEMA quizrunner OWNER TO root;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA quizrunner;
@@ -79,7 +66,7 @@ ALTER FUNCTION quizrunner.random_string(length integer) OWNER TO root;
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: account; Type: TABLE; Schema: quizrunner; Owner: root
@@ -89,7 +76,9 @@ CREATE TABLE quizrunner.account (
     id integer NOT NULL,
     email character varying NOT NULL,
     password character varying NOT NULL,
-    "networkName" character varying NOT NULL
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    network_id integer NOT NULL
 );
 
 
@@ -116,6 +105,18 @@ ALTER TABLE quizrunner.account_id_seq OWNER TO root;
 
 ALTER SEQUENCE quizrunner.account_id_seq OWNED BY quizrunner.account.id;
 
+
+--
+-- Name: account_user_link; Type: TABLE; Schema: quizrunner; Owner: root
+--
+
+CREATE TABLE quizrunner.account_user_link (
+    account_id integer NOT NULL,
+    user_id uuid NOT NULL
+);
+
+
+ALTER TABLE quizrunner.account_user_link OWNER TO root;
 
 --
 -- Name: answer_submission; Type: TABLE; Schema: quizrunner; Owner: root
@@ -262,6 +263,41 @@ ALTER TABLE quizrunner.migrations_id_seq OWNER TO root;
 --
 
 ALTER SEQUENCE quizrunner.migrations_id_seq OWNED BY quizrunner.migrations.id;
+
+
+--
+-- Name: network; Type: TABLE; Schema: quizrunner; Owner: root
+--
+
+CREATE TABLE quizrunner.network (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    photo character varying
+);
+
+
+ALTER TABLE quizrunner.network OWNER TO root;
+
+--
+-- Name: network_id_seq; Type: SEQUENCE; Schema: quizrunner; Owner: root
+--
+
+CREATE SEQUENCE quizrunner.network_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE quizrunner.network_id_seq OWNER TO root;
+
+--
+-- Name: network_id_seq; Type: SEQUENCE OWNED BY; Schema: quizrunner; Owner: root
+--
+
+ALTER SEQUENCE quizrunner.network_id_seq OWNED BY quizrunner.network.id;
 
 
 --
@@ -424,7 +460,7 @@ CREATE TABLE quizrunner.quizzes (
     deleted boolean DEFAULT false NOT NULL,
     completed_date timestamp without time zone,
     closed boolean DEFAULT false,
-    account_id integer
+    network_id integer
 );
 
 
@@ -647,6 +683,13 @@ ALTER TABLE ONLY quizrunner.migrations ALTER COLUMN id SET DEFAULT nextval('quiz
 
 
 --
+-- Name: network id; Type: DEFAULT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.network ALTER COLUMN id SET DEFAULT nextval('quizrunner.network_id_seq'::regclass);
+
+
+--
 -- Name: powerup id; Type: DEFAULT; Schema: quizrunner; Owner: root
 --
 
@@ -690,6 +733,14 @@ ALTER TABLE ONLY quizrunner.account
 
 
 --
+-- Name: account_user_link account_user_link_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.account_user_link
+    ADD CONSTRAINT account_user_link_pkey PRIMARY KEY (account_id, user_id);
+
+
+--
 -- Name: answer_submission answer_submission_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: root
 --
 
@@ -727,6 +778,14 @@ ALTER TABLE ONLY quizrunner.powerup
 
 ALTER TABLE ONLY quizrunner.migrations
     ADD CONSTRAINT migrations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: network network_pkey; Type: CONSTRAINT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.network
+    ADD CONSTRAINT network_pkey PRIMARY KEY (id);
 
 
 --
@@ -1048,6 +1107,14 @@ CREATE INDEX winners_user_id_fkey ON quizrunner.winners USING btree (user_id);
 
 
 --
+-- Name: account account_network_id_fk; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
+--
+
+ALTER TABLE ONLY quizrunner.account
+    ADD CONSTRAINT account_network_id_fk FOREIGN KEY (network_id) REFERENCES quizrunner.network(id) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
 -- Name: answer_submission answer_submission_choice_id_fkey; Type: FK CONSTRAINT; Schema: quizrunner; Owner: root
 --
 
@@ -1156,7 +1223,7 @@ ALTER TABLE ONLY quizrunner.questions_choices
 --
 
 ALTER TABLE ONLY quizrunner.quizzes
-    ADD CONSTRAINT quiz_account_fk FOREIGN KEY (account_id) REFERENCES quizrunner.account(id) ON UPDATE RESTRICT ON DELETE CASCADE;
+    ADD CONSTRAINT quiz_account_fk FOREIGN KEY (network_id) REFERENCES quizrunner.network(id) ON UPDATE RESTRICT ON DELETE CASCADE;
 
 
 --
